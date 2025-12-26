@@ -13,12 +13,12 @@ export const PRECONFIGURED_AGENTS: PreconfiguredAgent[] = [
     apiUrl: 'https://api.openai.com/v1/chat/completions',
     apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY || '',
     profileImage: '/chatgpt.png',
-    model: 'gpt-4.1-mini',
+    model: 'gpt-5-mini',
   },
   {
     apiUrl: 'https://api.x.ai/v1/chat/completions',
     apiKey: process.env.NEXT_PUBLIC_XAI_API_KEY || '',
     profileImage: '/grok.png',
-    model: 'grok-3-fast',
+    model: 'grok-4.1-fast',
   },
 ];
