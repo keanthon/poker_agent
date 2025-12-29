@@ -37,6 +37,9 @@ export interface TableChat {
   tone: 'confident' | 'nervous' | 'aggressive' | 'friendly' | 'neutral';
   type: 'trash_talk' | 'reaction' | 'bluff' | 'discussion' | 'greeting';
   timestamp: number;
+  linkedThought?: AgentThought;
+  actionDisplay?: string;
+  handId?: string;
 }
 
 // AI response from API
@@ -82,8 +85,10 @@ export interface GameContext {
     playerName: string;
     action: string;
     amount?: number;
+    timestamp?: number;
   }[];
   recentChat: TableChat[];
+  previousHands: string[]; // Summaries of past hands
 }
 
 // Stored agent registration (for persistence)

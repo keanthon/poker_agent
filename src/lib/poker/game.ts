@@ -34,6 +34,7 @@ export interface PlayerState {
 // Game state
 export interface GameState {
   id: string;
+  handId: string; // Add this
   players: PlayerState[];
   deck: Card[];
   communityCards: Card[];
@@ -52,7 +53,6 @@ export interface GameState {
   lastAction?: PokerAction;
 }
 
-// Create initial game state
 export function createGame(
   players: { id: string; name: string; chips: number; isAI: boolean; profileImage?: string }[],
   smallBlind: number = 10,
@@ -60,6 +60,7 @@ export function createGame(
 ): GameState {
   return {
     id: uuidv4(),
+    handId: uuidv4(), // Initialize handId
     players: players.map(p => ({
       ...p,
       holeCards: [],
@@ -101,6 +102,9 @@ export function startHand(state: GameState): GameState {
     isAllIn: false,
   }));
 
+  // New hand ID
+  newState.handId = uuidv4();
+
   // Shuffle and deal
   newState.deck = shuffleDeck(createDeck());
   newState.communityCards = [];
@@ -124,8 +128,18 @@ export function startHand(state: GameState): GameState {
   }
 
   // Post blinds
-  const sbIndex = (newState.dealerIndex + 1) % newState.players.length;
-  const bbIndex = (newState.dealerIndex + 2) % newState.players.length;
+  let sbIndex: number;
+  let bbIndex: number;
+
+  if (newState.players.length === 2) {
+    // Heads-up: Dealer is Small Blind, Opponent is Big Blind
+    sbIndex = newState.dealerIndex;
+    bbIndex = (newState.dealerIndex + 1) % 2;
+  } else {
+    // Normal: SB is left of Dealer, BB is left of SB
+    sbIndex = (newState.dealerIndex + 1) % newState.players.length;
+    bbIndex = (newState.dealerIndex + 2) % newState.players.length;
+  }
 
   // Small blind
   const sbPlayer = newState.players[sbIndex];
@@ -145,8 +159,14 @@ export function startHand(state: GameState): GameState {
   newState.currentBet = bbAmount;
   newState.minimumRaise = newState.bigBlind;
 
-  // First to act is after big blind
-  newState.currentPlayerIndex = (bbIndex + 1) % newState.players.length;
+  // First to act
+  if (newState.players.length === 2) {
+    // Heads-up: Dealer (SB) acts first pre-flop
+    newState.currentPlayerIndex = sbIndex;
+  } else {
+    // Normal: UTG (left of BB) acts first
+    newState.currentPlayerIndex = (bbIndex + 1) % newState.players.length;
+  }
   
   // Skip folded/all-in players
   newState.currentPlayerIndex = findNextActivePlayer(newState, newState.currentPlayerIndex);
@@ -335,19 +355,23 @@ function advanceToNextRound(state: GameState): GameState {
   }));
   newState.currentBet = 0;
   newState.minimumRaise = newState.bigBlind;
+  newState.lastAction = undefined;
 
   // Deal community cards based on round
   switch (newState.bettingRound) {
     case 'preflop':
       newState.bettingRound = 'flop';
+      dealCards(newState.deck, 1); // Burn 1
       newState.communityCards = dealCards(newState.deck, 3);
       break;
     case 'flop':
       newState.bettingRound = 'turn';
+      dealCards(newState.deck, 1); // Burn 1
       newState.communityCards.push(...dealCards(newState.deck, 1));
       break;
     case 'turn':
       newState.bettingRound = 'river';
+      dealCards(newState.deck, 1); // Burn 1
       newState.communityCards.push(...dealCards(newState.deck, 1));
       break;
     case 'river':
@@ -360,6 +384,12 @@ function advanceToNextRound(state: GameState): GameState {
     newState, 
     (newState.dealerIndex + 1) % newState.players.length
   );
+
+  // Auto-runout: If no players can act (all folded or all-in), advance again immediately
+  // unless we just finished the hand
+  if (newState.currentPlayerIndex === -1 && !newState.isHandComplete) {
+    return advanceToNextRound(newState);
+  }
 
   return newState;
 }

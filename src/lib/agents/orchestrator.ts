@@ -10,8 +10,9 @@ export function buildGameContext(
   state: GameState,
   player: PlayerState,
   agents: AIAgent[],
-  recentActions: { playerId: string; playerName: string; action: string; amount?: number }[],
-  recentChat: TableChat[]
+  recentActions: { playerId: string; playerName: string; action: string; amount?: number; timestamp?: number }[],
+  recentChat: TableChat[],
+  handHistory: { winners: string[]; actions: { playerName: string; action: string; amount?: number; timestamp?: number }[]; chatMessages?: TableChat[]; showdown?: { playerName: string; handDescription: string; cards: string }[] }[] = []
 ): GameContext {
   const playerIndex = state.players.findIndex(p => p.id === player.id);
   const dealerDistance = (playerIndex - state.dealerIndex + state.players.length) % state.players.length;
@@ -25,7 +26,61 @@ export function buildGameContext(
   else position = 'late';
 
   const validActions = getValidActions(state);
-  
+  // Calculate previous hands history
+  const previousHands = (() => {
+      // Format all history
+      const fullHistory = handHistory.map((h, i) => {
+        // Collect all events with timestamps
+        const events: { time: number; str: string }[] = [];
+        
+        // Add Actions
+        h.actions.forEach(a => {
+           const actionStr = `[${a.playerName} ${a.action}${a.amount ? ' ' + a.amount : ''}]`;
+           events.push({ time: a.timestamp || 0, str: actionStr });
+        });
+
+        // Add Chat
+        if (h.chatMessages) {
+           h.chatMessages.forEach(c => {
+              events.push({ time: c.timestamp, str: `[${c.agentName}: "${c.message}"]` });
+           });
+        }
+        
+        // Sort by time
+        events.sort((a, b) => a.time - b.time);
+        
+        const eventLog = events.map(e => e.str).join(', ');
+        
+        let showdownLog = '';
+        if (h.showdown && h.showdown.length > 0) {
+            const showdownDetails = h.showdown.map(s => `${s.playerName} showed ${s.handDescription} (${s.cards})`);
+            showdownLog = ` Showdown: [${showdownDetails.join('], [')}]`;
+        }
+        
+        return `Hand -${handHistory.length - i}: Winners: ${h.winners.join(', ')}. Log: ${eventLog}.${showdownLog}`;
+      });
+      
+      // Safety truncation: If history is too massive (e.g. > 1,500,000 chars), keep only the most recent ones that fit.
+      const MAX_TOTAL_CHARS = 1500000;
+      const BUFFER_FOR_PROMPT = 10000; // Increased buffer for safety (chatty agents, long rounds)
+      const MAX_HISTORY_CHARS = MAX_TOTAL_CHARS - BUFFER_FOR_PROMPT;
+      
+      let currentLength = 0;
+      const recentHistory: string[] = [];
+      
+      // Iterate backwards (newest first)
+      for (let i = fullHistory.length - 1; i >= 0; i--) {
+        const entry = fullHistory[i];
+        if (currentLength + entry.length > MAX_HISTORY_CHARS) {
+          break;
+        }
+        recentHistory.unshift(entry);
+        currentLength += entry.length;
+      }
+      
+      return recentHistory;
+  })();
+
   return {
     gameId: state.id,
     yourPlayerId: player.id,
@@ -55,8 +110,10 @@ export function buildGameContext(
           profileImage: agent?.profileImage || '/default-avatar.png',
         };
       }),
-    recentActions: recentActions.slice(-10),
-    recentChat: recentChat.slice(-10),
+    recentActions: recentActions,
+    // Only show chat from the current hand to prevent hallucinations
+    recentChat: recentChat.filter(msg => msg.handId === state.handId),
+    previousHands,
   };
 }
 
@@ -65,8 +122,28 @@ export async function callAgent(
   agent: AIAgent,
   context: GameContext
 ): Promise<AIAgentResponse> {
+  // Interleave recent actions and chat
+  const recentLog = (() => {
+      const events = [
+        ...context.recentActions.map(a => ({ 
+            time: a.timestamp || 0, 
+            str: `- ${a.playerName}: ${a.action}${a.amount ? ` (${a.amount})` : ''}` 
+        })),
+        ...context.recentChat.map(c => ({ 
+            time: c.timestamp, 
+            str: `- ${c.agentName} (Chat): "${c.message}"` 
+        }))
+      ];
+      
+      // Sort by time
+      events.sort((a,b) => a.time - b.time);
+      
+      return events.map(e => e.str).join('\n') || 'None yet';
+  })();
+
   const userMessage = `
 Current game state:
+You are playing as: "${context.yourName}"
 - Betting round: ${context.bettingRound}
 - Your cards: ${context.yourHoleCards.join(', ')}
 - Community cards: ${context.communityCards.length > 0 ? context.communityCards.join(', ') : 'None yet'}
@@ -82,45 +159,139 @@ ${context.opponents.map(o =>
   `- ${o.name}: ${o.chips} chips, bet: ${o.currentBet}${o.hasFolded ? ' (folded)' : ''}${o.isAllIn ? ' (all-in)' : ''}`
 ).join('\n')}
 
-Recent actions:
-${context.recentActions.map(a => 
-  `- ${a.playerName}: ${a.action}${a.amount ? ` (${a.amount})` : ''}`
-).join('\n') || 'None yet'}
+Current Hand Log (Chronological):
+${recentLog}
 
-${context.recentChat.length > 0 ? `
-Recent table talk:
-${context.recentChat.map(c => `- ${c.agentName}: "${c.message}"`).join('\n')}
+${context.previousHands.length > 0 ? `
+Previous Hand History (-1 = Last hand, -2 = 2nd last hand, etc. Use to identify opponent tendencies, bluffs, and patterns):
+${context.previousHands.join('\n')}
 ` : ''}
 
 What's your move? Think through your decision first, then use the appropriate tool.`;
 
+  let messages: any[] = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user', content: userMessage },
+  ];
+
+  let accumulatedReasoning = '';
+  let accumulatedChat: AIAgentResponse['chat'] | undefined;
+  
   try {
-    const response = await fetch(agent.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${agent.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: agent.model || 'gpt-4o-mini', // Use configured model or default to fast model
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userMessage },
-        ],
-        tools: POKER_TOOLS,
-        tool_choice: 'required',
-      }),
-    });
+    // Maximum 3 steps to complete one poker turn: 1. Think, 2. Say, 3. Action
+    for (let step = 0; step < 3; step++) {
+      const response = await fetch(agent.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${agent.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: agent.model || 'gpt-5-nano',
+          messages,
+          tools: POKER_TOOLS,
+          tool_choice: 'required',
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error Details:', errorText);
+        throw new Error(`API error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log(`[Step ${step}] Raw Response for ${agent.model}:`, JSON.stringify(data, null, 2));
+      const result = parseAgentResponse(agent.id, data);
+
+      // Accumulate reasoning and chat
+      if (result.thought?.reasoning && result.thought.reasoning !== 'Thinking context-aware strategy...') {
+        accumulatedReasoning = result.thought.reasoning;
+      }
+      if (result.chat) {
+        if (accumulatedChat) {
+          accumulatedChat = {
+            ...result.chat,
+            message: `${accumulatedChat.message} ${result.chat.message}`
+          };
+        } else {
+          accumulatedChat = result.chat;
+        }
+      }
+
+      // If we have an action, we are done
+      if (result.action) {
+        // Return combined result
+        return {
+          thought: {
+            agentId: agent.id,
+            timestamp: Date.now(),
+            reasoning: accumulatedReasoning || result.thought?.reasoning || 'No reasoning provided.',
+            confidence: result.thought?.confidence || 50
+          },
+          action: result.action,
+          chat: accumulatedChat || result.chat
+        };
+      }
+      
+      // If no action, treat as intermediate step and continue
+      const toolCallId = `call_${Date.now()}_${step}`;
+      const toolCalls = [];
+
+      // Reconstruct tool calls for history matching
+      if (result.thought?.reasoning && result.thought.reasoning !== 'Thinking context-aware strategy...') {
+         toolCalls.push({
+            id: toolCallId + '_think',
+            type: 'function',
+            function: { name: 'think', arguments: JSON.stringify({ thought: result.thought.reasoning }) }
+         });
+      }
+      if (result.chat) {
+         toolCalls.push({
+            id: toolCallId + '_say',
+            type: 'function',
+            function: { name: 'say', arguments: JSON.stringify(result.chat) }
+         });
+      }
+
+      // If we truly have no apparent tool calls but no action (parser failed?), break
+      if (toolCalls.length === 0) {
+        // Check if there was raw content we missed? 
+        // If not, break to avoid infinite loop of nothingness
+        break;
+      }
+
+      // Append assistant message
+      messages.push({
+        role: 'assistant',
+        content: null,
+        tool_calls: toolCalls
+      });
+      
+      // Append tool results
+      toolCalls.forEach(tc => {
+        messages.push({
+          role: 'tool',
+          tool_call_id: tc.id,
+          content: 'Success.'
+        });
+      });
+
+      // Prompt for next step
+      messages.push({
+        role: 'user',
+        content: 'Continue. You MUST eventually use an ACTION tool (fold, check, call, raise, all_in).',
+      });
     }
+    
+    // Fallback
+    return {
+      thought: { agentId: agent.id, timestamp: Date.now(), reasoning: 'No action taken.', confidence: 0 },
+      action: { name: 'fold' }
+    };
 
-    const data = await response.json();
-    return parseAgentResponse(agent.id, data);
   } catch (error) {
     console.error('Error calling agent:', error);
-    // Return a default fold action on error
     return {
       thought: {
         agentId: agent.id,
@@ -150,7 +321,7 @@ function parseAgentResponse(agentId: string, data: unknown): AIAgentResponse {
   };
 
   const message = response.choices?.[0]?.message;
-  const reasoning = message?.content || '';
+  let reasoning = message?.content || '';
   const toolCalls = message?.tool_calls || [];
 
   let action: AIAgentResponse['action'];
@@ -171,12 +342,19 @@ function parseAgentResponse(agentId: string, data: unknown): AIAgentResponse {
         message: (args.message as string) || '',
         tone: (args.tone as TableChat['tone']) || 'neutral',
       };
+    } else if (name === 'think') {
+      reasoning = (args.thought as string) || reasoning;
     } else {
       action = {
         name,
         arguments: args,
       };
     }
+  }
+
+  // Fallback if still empty
+  if (!reasoning) {
+    reasoning = 'Thinking context-aware strategy...';
   }
 
   // Extract confidence from reasoning if mentioned

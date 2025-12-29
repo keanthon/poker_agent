@@ -32,7 +32,7 @@ export default function AgentsPage() {
       // Preload agents if none exist
       PRECONFIGURED_AGENTS.forEach(agent => {
         registerAgent({
-          name: agent.model,  // Use model as the display name
+          name: agent.name,  // Use friendly display name
           apiUrl: agent.apiUrl,
           apiKey: agent.apiKey,
           profileImage: agent.profileImage,
@@ -43,7 +43,7 @@ export default function AgentsPage() {
       // Update existing agents with missing model field
       registeredAgents.forEach(agent => {
         if (!agent.model) {
-          const preconfigured = PRECONFIGURED_AGENTS.find(p => p.model === agent.name);
+          const preconfigured = PRECONFIGURED_AGENTS.find(p => p.model === agent.name || p.name === agent.name);
           if (preconfigured) {
             updateAgent(agent.id, { model: preconfigured.model });
           }

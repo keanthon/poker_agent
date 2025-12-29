@@ -11,6 +11,7 @@ import {
   PokerAction,
   hasMultiplePlayersWithChips,
   getValidActions,
+  cardToDisplayString,
 } from '../lib/poker';
 import { 
   AIAgent, 
@@ -22,16 +23,28 @@ import {
   createChatMessage,
 } from '../lib/agents';
 
+export interface HandSummary {
+  id: string;
+  winners: string[];
+  pot: number;
+  actions: { playerName: string; action: string; amount?: number; timestamp?: number }[];
+  chatMessages: TableChat[];
+  showdown?: { playerName: string; handDescription: string; cards: string }[];
+  timestamp: number;
+}
+
 interface GameStore {
   // State
   gameState: GameState | null;
   agents: AIAgent[];
   thoughts: AgentThought[];
   chatMessages: TableChat[];
-  actionHistory: { playerId: string; playerName: string; action: string; amount?: number }[];
+  handHistory: HandSummary[];
+  actionHistory: { playerId: string; playerName: string; action: string; amount?: number; timestamp?: number }[];
   isProcessingTurn: boolean;
   selectedAgentId: string | null;
   error: string | null;
+  pkMode: boolean;
 
   // Actions
   createNewGame: (agents: AIAgent[], smallBlind?: number, bigBlind?: number) => void;
@@ -40,9 +53,12 @@ interface GameStore {
   processHumanAction: (action: PokerAction) => void;
   addChatMessage: (chat: TableChat) => void;
   selectAgent: (agentId: string | null) => void;
+  togglePkMode: () => void;
   clearError: () => void;
   reset: () => void;
 }
+
+
 
 export const useGameStore = create<GameStore>((set, get) => ({
   gameState: null,
@@ -50,9 +66,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   thoughts: [],
   chatMessages: [],
   actionHistory: [],
+  handHistory: [],
   isProcessingTurn: false,
   selectedAgentId: null,
   error: null,
+  pkMode: false,
 
   createNewGame: (agents, smallBlind = 10, bigBlind = 20) => {
     const players = agents.map(agent => ({
@@ -71,6 +89,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       thoughts: [],
       chatMessages: [],
       actionHistory: [],
+      handHistory: [],
       isProcessingTurn: false,
       selectedAgentId: null,
       error: null,
@@ -78,7 +97,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   startNewHand: () => {
-    const { gameState } = get();
+    const { gameState, actionHistory, handHistory, chatMessages } = get();
     if (!gameState) return;
 
     if (!hasMultiplePlayersWithChips(gameState)) {
@@ -86,18 +105,78 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
 
+    // Archive previous hand if it was played
+    let newHandHistory = [...handHistory];
+    if (gameState.isHandComplete && actionHistory.length > 0) {
+      // Filter chat messages for the completed hand
+      const currentHandChat = chatMessages.filter(msg => msg.handId === gameState.handId);
+
+      // Capture showdown info
+      const showdown: { playerName: string; handDescription: string; cards: string }[] = [];
+      if (gameState.handResults && gameState.handResults.size > 0) {
+        gameState.handResults.forEach((result, playerId) => {
+           const player = gameState.players.find(p => p.id === playerId);
+           if (player) {
+              showdown.push({
+                  playerName: player.name,
+                  handDescription: result.descr,
+                  cards: player.holeCards.map(cardToDisplayString).join(' ')
+              });
+           }
+        });
+      }
+
+      newHandHistory.push({
+        id: uuidv4(),
+        winners: gameState.winners.map(id => gameState.players.find(p => p.id === id)?.name || 'Unknown'),
+        pot: 0,
+        actions: [...actionHistory],
+        chatMessages: currentHandChat,
+        showdown,
+        timestamp: Date.now(),
+      });
+    }
+
     const newState = startHand(gameState);
+    
+    // Initialize history with blinds
+    const initialHistory: { playerId: string; playerName: string; action: string; amount?: number; timestamp: number }[] = [];
+    
+    // Find players who posted blinds (currentBet > 0)
+    // In startHand, currentBet is reset to 0 then blinds added
+    newState.players.forEach(p => {
+      if (p.currentBet > 0) {
+        // Determine if SB or BB based on amount
+        let action = 'Post Blind';
+        if (p.currentBet === newState.smallBlind) action = 'Post SB';
+        if (p.currentBet === newState.bigBlind) action = 'Post BB';
+        
+        initialHistory.push({
+          playerId: p.id,
+          playerName: p.name,
+          action: action,
+          amount: p.currentBet,
+          timestamp: Date.now()
+        });
+      }
+    });
+
     set({ 
       gameState: newState,
-      thoughts: [],
-      actionHistory: [],
+      // thoughts: [], // Don't clear thoughts, keep history like chat
+      actionHistory: initialHistory,
+      handHistory: newHandHistory,
     });
   },
 
   processNextTurn: async () => {
     const { gameState, agents, actionHistory, chatMessages, isProcessingTurn } = get();
     
-    if (!gameState || gameState.isHandComplete || isProcessingTurn) return;
+    if (!gameState || gameState.isHandComplete) return;
+    if (isProcessingTurn) {
+        console.warn('Turn processing skipped - already in progress');
+        return;
+    }
 
     const currentPlayer = getCurrentPlayer(gameState);
     if (!currentPlayer || !currentPlayer.isAI) return;
@@ -114,23 +193,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
         currentPlayer,
         agents,
         actionHistory,
-        chatMessages
+        chatMessages,
+        get().handHistory
       );
 
       // Call AI agent
       const response = await callAgent(agent, context);
-
-      // Store thought
-      const thoughts = [...get().thoughts, response.thought];
-
-      // Handle chat if any
-      let newChatMessages = [...get().chatMessages];
-      if (response.chat) {
-        const chatMsg = createChatMessage(agent.id, agent.name, response.chat);
-        if (chatMsg) {
-          newChatMessages.push(chatMsg);
-        }
-      }
 
       // Convert and process action
       const validActions = getValidActions(gameState);
@@ -142,6 +210,37 @@ export const useGameStore = create<GameStore>((set, get) => ({
         playerId: currentPlayer.id,
       };
 
+      // Store thought
+      const thoughts = [...get().thoughts, response.thought];
+
+      // Handle chat if any
+      let newChatMessages = [...get().chatMessages];
+      if (response.chat) {
+        const chatMsg = createChatMessage(agent.id, agent.name, response.chat);
+        if (chatMsg) {
+          chatMsg.linkedThought = response.thought;
+          chatMsg.handId = gameState.handId;
+          
+          // Add formatted action display
+          let actionStr = '';
+          const actionName = gameAction.type.charAt(0).toUpperCase() + gameAction.type.slice(1);
+          if (gameAction.type === 'raise') {
+             actionStr = `Raises ${gameAction.amount}`;
+          } else if (gameAction.type === 'call') {
+             actionStr = `Calls`; 
+          } else if (gameAction.type === 'all_in') {
+             actionStr = `Goes All-In`;
+          } else if (gameAction.type === 'check') {
+             actionStr = `Checks`;
+          } else {
+             actionStr = `Folds`;
+          }
+          chatMsg.actionDisplay = actionStr;
+
+          newChatMessages.push(chatMsg);
+        }
+      }
+
       const newGameState = processAction(gameState, action);
 
       // Update action history
@@ -150,6 +249,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         playerName: currentPlayer.name,
         action: action.type,
         amount: action.amount,
+        timestamp: Date.now(),
       }];
 
       set({
@@ -183,6 +283,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         playerName: currentPlayer.name,
         action: action.type,
         amount: action.amount,
+        timestamp: Date.now(),
       }];
 
       set({
@@ -205,6 +306,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ selectedAgentId: agentId });
   },
 
+  togglePkMode: () => {
+    set(state => ({ pkMode: !state.pkMode }));
+  },
+
   clearError: () => {
     set({ error: null });
   },
@@ -216,7 +321,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       thoughts: [],
       chatMessages: [],
       actionHistory: [],
+      handHistory: [],
       isProcessingTurn: false,
+      pkMode: false,
       selectedAgentId: null,
       error: null,
     });
