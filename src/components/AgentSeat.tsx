@@ -33,6 +33,10 @@ export function AgentSeat({
   const showThoughts = viewMode === 'transparent';
   const [imgError, setImgError] = useState(false);
 
+  // Guard against emojis or invalid strings being stored as profileImage
+  const isValidImageSrc = (src?: string) =>
+    !!src && (src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://'));
+
   // Calculate position around table (oval distribution)
   const angle = (position / totalSeats) * 2 * Math.PI - Math.PI / 2;
   const radiusX = 44;
@@ -101,9 +105,9 @@ export function AgentSeat({
             border-2 transition-colors duration-300
             ${isCurrentTurn ? 'border-yellow-400' : 'border-white/20'}
           `}>
-            {player.profileImage && !imgError ? (
+            {isValidImageSrc(player.profileImage) && !imgError ? (
               <Image
-                src={player.profileImage}
+                src={player.profileImage!}
                 alt={player.name}
                 fill
                 className="object-cover object-center"
