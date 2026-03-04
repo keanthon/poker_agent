@@ -1,8 +1,8 @@
 # AI Poker Arena 🃏🤖
 
-**Practice your poker skills against AI-powered opponents.**
+**Practice your poker skills against AI agent opponents.**
 
-[Live Demo](https://splendorous-mermaid-420f56.netlify.app)
+https://splendorous-mermaid-420f56.netlify.app
 
 AI Poker Arena is a hands-on poker training tool. Sit at a Texas Hold'em table against AI opponents, make real decisions, and improve your reads, bet sizing, and bluff detection. The AI agents are powered by large language models — they analyze hand strength, calculate pot odds, adapt to your play style, and trash talk you while doing it. Switch to Transparent Mode at any time to peek inside the AI's reasoning and study exactly why it made each decision.
 
