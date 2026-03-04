@@ -173,6 +173,19 @@ What's your move? Think through your decision first, then use the appropriate to
     ? `[CUSTOM INSTRUCTIONS]\n${agent.customPrompt}\n\n[SYSTEM INSTRUCTIONS]\n${SYSTEM_PROMPT}`
     : SYSTEM_PROMPT;
 
+  // Graceful fallback if no API key configured
+  if (!agent.apiKey || !agent.apiUrl) {
+    return {
+      thought: {
+        agentId: agent.id,
+        timestamp: Date.now(),
+        reasoning: 'No API key configured — folding automatically. Click "Edit" on this agent in the Agents page to add your API key.',
+        confidence: 0,
+      },
+      action: { name: 'fold' },
+    };
+  }
+
   let messages: any[] = [
     { role: 'system', content: finalSystemPrompt },
     { role: 'user', content: userMessage },
