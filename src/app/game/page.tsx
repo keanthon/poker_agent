@@ -72,6 +72,7 @@ export default function GamePage() {
   const viewMode = useSettingsStore(state => state.viewMode);
   const setViewMode = useSettingsStore(state => state.setViewMode);
   const audioEnabled = useSettingsStore(state => state.audioEnabled);
+  const toggleAudio = useSettingsStore(state => state.toggleAudio);
   const autoPlayDelay = useSettingsStore(state => state.autoPlayDelay);
 
   // Local state
@@ -499,6 +500,22 @@ export default function GamePage() {
                 }}
               >
                 ⚔️ PK
+              </button>
+              <button
+                onClick={toggleAudio}
+                title={audioEnabled ? 'Turn voice over off' : 'Turn voice over on'}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  background: audioEnabled ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'transparent',
+                  color: audioEnabled ? 'white' : '#9ca3af',
+                  marginLeft: '10px',
+                }}
+              >
+                {audioEnabled ? '🔊' : '🔇'} Voice
               </button>
             </div>
 

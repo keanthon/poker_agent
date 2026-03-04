@@ -52,7 +52,7 @@ export default function AgentsPage() {
         let updates: Partial<typeof agent> = {};
         const preconfigured = PRECONFIGURED_AGENTS.find(p => p.model === agent.name || p.name === agent.name);
         
-        if (!agent.model && preconfigured) {
+        if (preconfigured && (!agent.model || agent.model !== preconfigured.model)) {
           updates.model = preconfigured.model;
         }
         if (!agent.customPrompt && preconfigured?.customPrompt) {

@@ -121,12 +121,12 @@ export const tts = new TTSEngine();
 
 // Voice personality presets
 export const VOICE_PRESETS: Record<string, TTSOptions> = {
-  confident: { rate: 1.1, pitch: 0.95, volume: 1.0 },
-  nervous: { rate: 1.3, pitch: 1.3, volume: 0.8 },
-  aggressive: { rate: 1.1, pitch: 0.8, volume: 1.0 }, // Sped up from 0.9
-  friendly: { rate: 1.15, pitch: 1.1, volume: 0.9 },
-  neutral: { rate: 1.1, pitch: 1.0, volume: 0.9 },
-  thoughtful: { rate: 1.6, pitch: 0.9, volume: 0.7 }, // For internal thoughts
+  confident: { rate: 1.5, pitch: 0.95, volume: 1.0 },
+  nervous: { rate: 1.7, pitch: 1.3, volume: 0.8 },
+  aggressive: { rate: 1.5, pitch: 0.8, volume: 1.0 },
+  friendly: { rate: 1.55, pitch: 1.1, volume: 0.9 },
+  neutral: { rate: 1.5, pitch: 1.0, volume: 0.9 },
+  thoughtful: { rate: 2.0, pitch: 0.9, volume: 0.7 }, // For internal thoughts
 };
 
 // Speak with personality

@@ -24,7 +24,7 @@ export const PRECONFIGURED_AGENTS: PreconfiguredAgent[] = [
     apiUrl: 'https://api.x.ai/v1/chat/completions',
     apiKey: process.env.NEXT_PUBLIC_XAI_API_KEY || '',
     profileImage: '/grok.png',
-    model: 'grok-beta',
+    model: 'grok-4-1-fast',
     customPrompt: "You are AdamGrok, an edgy, hyper-analytical, deeply sarcastic AI who constantly references memes, math, and probability. You play very tight and mathematically sound poker, folding often, but when you bet, you are ruthless and explain exactly why your opponent's play was statistically terrible. You use lots of Gen Z slang mixed with high-level statistics.",
   },
   {
@@ -32,7 +32,7 @@ export const PRECONFIGURED_AGENTS: PreconfiguredAgent[] = [
     apiUrl: 'https://api.x.ai/v1/chat/completions',
     apiKey: process.env.NEXT_PUBLIC_XAI_API_KEY || '',
     profileImage: '/grok.png',
-    model: 'grok-beta',
+    model: 'grok-4-1-fast',
     customPrompt: "You are BillyGrok, a chaotic, wildcard AI who plays like a drunken cowboy. You are friendly, use a lot of Southern idioms and cowboy slang, and you play absolute junk hands just to see what happens. You regularly go all-in with terrible cards just to scare people, and you laugh hysterically in chat whether you win or lose.",
   },
 ];

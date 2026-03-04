@@ -186,128 +186,65 @@ What's your move? Think through your decision first, then use the appropriate to
     };
   }
 
-  let messages: any[] = [
+  const messages: any[] = [
     { role: 'system', content: finalSystemPrompt },
     { role: 'user', content: userMessage },
   ];
 
-  let accumulatedReasoning = '';
-  let accumulatedChat: AIAgentResponse['chat'] | undefined;
-  
   try {
-    // Maximum 3 steps to complete one poker turn: 1. Think, 2. Say, 3. Action
-    for (let step = 0; step < 3; step++) {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          apiUrl: agent.apiUrl,
-          apiKey: agent.apiKey,
-          payload: {
-            model: agent.model || 'gpt-5-nano',
-            messages,
-            tools: POKER_TOOLS,
-            tool_choice: 'required',
-          }
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error Details:', errorText);
-        throw new Error(`API error: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log(`[Step ${step}] Raw Response for ${agent.model}:`, JSON.stringify(data, null, 2));
-      const result = parseAgentResponse(agent.id, data);
-
-      // Accumulate reasoning and chat
-      if (result.thought?.reasoning && result.thought.reasoning !== 'Thinking context-aware strategy...') {
-        accumulatedReasoning = result.thought.reasoning;
-      }
-      if (result.chat) {
-        if (accumulatedChat) {
-          accumulatedChat = {
-            ...result.chat,
-            message: `${accumulatedChat.message} ${result.chat.message}`
-          };
-        } else {
-          accumulatedChat = result.chat;
+    // Single API call — model should return think + say + action simultaneously
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        apiUrl: agent.apiUrl,
+        apiKey: agent.apiKey,
+        payload: {
+          model: agent.model || 'gpt-5-nano',
+          messages,
+          tools: POKER_TOOLS,
+          tool_choice: 'required',
         }
-      }
+      }),
+    });
 
-      // If we have an action, we are done
-      if (result.action) {
-        // Return combined result
-        return {
-          thought: {
-            agentId: agent.id,
-            timestamp: Date.now(),
-            reasoning: accumulatedReasoning || result.thought?.reasoning || 'No reasoning provided.',
-            confidence: result.thought?.confidence || 50
-          },
-          action: result.action,
-          chat: accumulatedChat || result.chat
-        };
-      }
-      
-      // If no action, treat as intermediate step and continue
-      const toolCallId = `call_${Date.now()}_${step}`;
-      const toolCalls = [];
-
-      // Reconstruct tool calls for history matching
-      if (result.thought?.reasoning && result.thought.reasoning !== 'Thinking context-aware strategy...') {
-         toolCalls.push({
-            id: toolCallId + '_think',
-            type: 'function',
-            function: { name: 'think', arguments: JSON.stringify({ thought: result.thought.reasoning }) }
-         });
-      }
-      if (result.chat) {
-         toolCalls.push({
-            id: toolCallId + '_say',
-            type: 'function',
-            function: { name: 'say', arguments: JSON.stringify(result.chat) }
-         });
-      }
-
-      // If we truly have no apparent tool calls but no action (parser failed?), break
-      if (toolCalls.length === 0) {
-        // Check if there was raw content we missed? 
-        // If not, break to avoid infinite loop of nothingness
-        break;
-      }
-
-      // Append assistant message
-      messages.push({
-        role: 'assistant',
-        content: null,
-        tool_calls: toolCalls
-      });
-      
-      // Append tool results
-      toolCalls.forEach(tc => {
-        messages.push({
-          role: 'tool',
-          tool_call_id: tc.id,
-          content: 'Success.'
-        });
-      });
-
-      // Prompt for next step
-      messages.push({
-        role: 'user',
-        content: 'Continue. You MUST eventually use an ACTION tool (fold, check, call, raise, all_in).',
-      });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error Details:', errorText);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
-    
-    // Fallback
+
+    const data = await response.json();
+    console.log(`[Single-call] Raw Response for ${agent.model}:`, JSON.stringify(data, null, 2));
+    const result = parseAgentResponse(agent.id, data);
+
+    // If we got an action, return the full result
+    if (result.action) {
+      return {
+        thought: {
+          agentId: agent.id,
+          timestamp: Date.now(),
+          reasoning: result.thought?.reasoning || 'No reasoning provided.',
+          confidence: result.thought?.confidence || 50,
+        },
+        action: result.action,
+        chat: result.chat,
+      };
+    }
+
+    // No action returned — fallback to check (if valid) or fold
+    const fallbackAction = context.validActions.includes('check') ? 'check' : 'fold';
     return {
-      thought: { agentId: agent.id, timestamp: Date.now(), reasoning: 'No action taken.', confidence: 0 },
-      action: { name: 'fold' }
+      thought: {
+        agentId: agent.id,
+        timestamp: Date.now(),
+        reasoning: result.thought?.reasoning || 'No action returned, falling back.',
+        confidence: result.thought?.confidence || 0,
+      },
+      action: { name: fallbackAction },
+      chat: result.chat,
     };
 
   } catch (error) {

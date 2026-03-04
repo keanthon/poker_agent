@@ -32,7 +32,7 @@ interface SettingsStore {
 export const useSettingsStore = create<SettingsStore>()(
   persist(
     (set, get) => ({
-      viewMode: 'transparent',
+      viewMode: 'player',
       audioEnabled: true,
       autoPlay: true,
       autoPlayDelay: 2000,
