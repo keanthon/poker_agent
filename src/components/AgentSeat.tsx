@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { PlayerState } from '@/lib/poker';
@@ -30,6 +31,7 @@ export function AgentSeat({
 }: AgentSeatProps) {
   const viewMode = useSettingsStore(state => state.viewMode);
   const showThoughts = viewMode === 'transparent';
+  const [imgError, setImgError] = useState(false);
 
   // Calculate position around table (oval distribution)
   const angle = (position / totalSeats) * 2 * Math.PI - Math.PI / 2;
@@ -99,12 +101,13 @@ export function AgentSeat({
             border-2 transition-colors duration-300
             ${isCurrentTurn ? 'border-yellow-400' : 'border-white/20'}
           `}>
-            {player.profileImage ? (
+            {player.profileImage && !imgError ? (
               <Image
                 src={player.profileImage}
                 alt={player.name}
                 fill
-                className="object-cover"
+                className="object-cover object-center"
+                onError={() => setImgError(true)}
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
