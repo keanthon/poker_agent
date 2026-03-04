@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { isValidImageSrc } from '@/lib/utils/image';
 import { useGameStore, useSettingsStore } from '@/store';
 import { tts, speakWithPersonality } from '@/lib/audio/tts';
 import { PlayerState, getCurrentPlayer, getValidActions } from '@/lib/poker';
@@ -22,7 +23,7 @@ function PlayerAvatar({ player, isCurrentTurn }: { player: PlayerState; isCurren
       position: 'relative',
       flexShrink: 0,
     }}>
-      {player.profileImage && !imgError ? (
+      {isValidImageSrc(player.profileImage) && !imgError ? (
         <Image
           src={player.profileImage}
           alt={player.name}

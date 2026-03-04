@@ -7,6 +7,7 @@ import { PlayerState } from '@/lib/poker';
 import { AgentThought } from '@/lib/agents';
 import { PlayingCard } from './Card';
 import { useSettingsStore } from '@/store';
+import { isValidImageSrc } from '@/lib/utils/image';
 
 interface AgentSeatProps {
   player: PlayerState;
@@ -32,10 +33,6 @@ export function AgentSeat({
   const viewMode = useSettingsStore(state => state.viewMode);
   const showThoughts = viewMode === 'transparent';
   const [imgError, setImgError] = useState(false);
-
-  // Guard against emojis or invalid strings being stored as profileImage
-  const isValidImageSrc = (src?: string) =>
-    !!src && (src.startsWith('/') || src.startsWith('http://') || src.startsWith('https://'));
 
   // Calculate position around table (oval distribution)
   const angle = (position / totalSeats) * 2 * Math.PI - Math.PI / 2;

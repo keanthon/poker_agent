@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Volume2, VolumeX } from 'lucide-react';
 import Image from 'next/image';
+import { isValidImageSrc } from '@/lib/utils/image';
 import { PlayerState } from '@/lib/poker';
 import { AgentThought, TableChat } from '@/lib/agents';
 import { PlayingCard } from './Card';
@@ -46,7 +47,7 @@ export function AgentDetailView({ player, thoughts, chats, onClose }: AgentDetai
       <div className="p-4 border-b border-gray-700 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-purple-500">
-            {player.profileImage ? (
+            {isValidImageSrc(player.profileImage) ? (
               <Image
                 src={player.profileImage}
                 alt={player.name}

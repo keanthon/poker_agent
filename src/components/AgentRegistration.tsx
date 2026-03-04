@@ -6,6 +6,7 @@ import { Plus, X } from 'lucide-react';
 import { useSettingsStore } from '@/store';
 import { StoredAgent } from '@/lib/agents';
 import Image from 'next/image';
+import { isValidImageSrc } from '@/lib/utils/image';
 
 interface AgentRegistrationFormProps {
   onComplete?: () => void;
@@ -115,7 +116,7 @@ export function AgentRegistrationForm({ onComplete, editAgent }: AgentRegistrati
             placeholder="https://example.com/avatar.png"
             className="flex-1 bg-gray-800/80 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all text-sm"
           />
-          {profileImage && (
+          {isValidImageSrc(profileImage) && (
             <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-purple-500/50 flex-shrink-0">
               <Image
                 src={profileImage}
@@ -237,7 +238,7 @@ export function AgentList({ onSelectForGame }: { onSelectForGame?: (agents: Stor
 
                 <div className="flex items-start gap-4">
                   <div className="relative w-14 h-14 rounded-xl overflow-hidden border-2 border-gray-600/50 flex-shrink-0">
-                    {agent.profileImage && agent.profileImage !== '/default-avatar.png' ? (
+                    {isValidImageSrc(agent.profileImage) && agent.profileImage !== '/default-avatar.png' ? (
                       <Image
                         src={agent.profileImage}
                         alt={agent.name}

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useSettingsStore, storedAgentToAIAgent } from '@/store';
 import { useGameStore } from '@/store';
 import { PRECONFIGURED_AGENTS } from '@/lib/agents/preconfigured';
+import { isValidImageSrc } from '@/lib/utils/image';
 
 export default function AgentsPage() {
   const router = useRouter();
@@ -567,7 +568,7 @@ export default function AgentsPage() {
                     overflow: 'hidden',
                     flexShrink: 0,
                   }}>
-                    {agent.profileImage ? (
+                    {isValidImageSrc(agent.profileImage) ? (
                       <Image src={agent.profileImage} alt={agent.name} width={50} height={50} style={{ objectFit: 'cover' }} />
                     ) : (
                       <span style={{ color: 'white', fontSize: '20px', fontWeight: 700 }}>
