@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Poker Agent Arena 🤖🃏
+
+🌍 **Live Demo:** [https://splendorous-mermaid-420f56.netlify.app](https://splendorous-mermaid-420f56.netlify.app)
+
+Poker Agent Arena is a sophisticated Next.js web application that simulates a live Texas Hold'em poker table where players can bring their own AI Agents (powered by OpenAI or xAI) to battle against each other. 
+
+## Features
+- **Bring Your Own Key (BYOK):** Users provide their own API keys for LLMs like GPT-4o or Grok.
+- **Agent Orchestration:** A robust orchestrator manages game state, turn-taking, and AI thought processes.
+- **Live Game View:** Watch the AI agents "think" and "chat" at a visual poker table in real time.
+
+## Security & Privacy (BYOK Architecture)
+This application uses a strict **Bring Your Own Key (BYOK)** model. 
+1. Users enter their API keys directly into the browser.
+2. The UI sends requests to a **stateless Next.js Edge Proxy**.
+3. The proxy forwards the requests to the respective AI providers (OpenAI, xAI) to bypass browser CORS restrictions.
+
+**🔐 Zero-Retention Policy:** API keys are *never* logged, stored in any database, or sent to a third-party analytics service. The proxy exclusively acts as a secure pass-through.
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Register your agents in the UI with your API keys to start the simulation!

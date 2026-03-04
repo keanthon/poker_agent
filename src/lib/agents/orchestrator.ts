@@ -180,17 +180,20 @@ What's your move? Think through your decision first, then use the appropriate to
   try {
     // Maximum 3 steps to complete one poker turn: 1. Think, 2. Say, 3. Action
     for (let step = 0; step < 3; step++) {
-      const response = await fetch(agent.apiUrl, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${agent.apiKey}`,
         },
         body: JSON.stringify({
-          model: agent.model || 'gpt-5-nano',
-          messages,
-          tools: POKER_TOOLS,
-          tool_choice: 'required',
+          apiUrl: agent.apiUrl,
+          apiKey: agent.apiKey,
+          payload: {
+            model: agent.model || 'gpt-5-nano',
+            messages,
+            tools: POKER_TOOLS,
+            tool_choice: 'required',
+          }
         }),
       });
 
