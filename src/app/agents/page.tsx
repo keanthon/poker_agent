@@ -120,7 +120,7 @@ export default function AgentsPage() {
         name: 'You',
         apiUrl: '',
         apiKey: '',
-        profileImage: '🧑',
+        profileImage: '',
         isHuman: true,
       });
       setSelectedIds(prev => new Set([...prev, newAgent.id]));
