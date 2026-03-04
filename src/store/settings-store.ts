@@ -103,5 +103,6 @@ export function storedAgentToAIAgent(stored: StoredAgent): AIAgent {
     voiceId: stored.voiceId,
     model: stored.model,
     customPrompt: stored.customPrompt,
+    isHuman: stored.isHuman,
   };
 }

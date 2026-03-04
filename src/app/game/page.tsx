@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useGameStore, useSettingsStore } from '@/store';
 import { tts, speakWithPersonality } from '@/lib/audio/tts';
-import { PlayerState } from '@/lib/poker';
+import { PlayerState, getCurrentPlayer, getValidActions } from '@/lib/poker';
 
 function PlayerAvatar({ player, isCurrentTurn }: { player: PlayerState; isCurrentTurn: boolean }) {
   const [imgError, setImgError] = useState(false);
@@ -59,6 +59,8 @@ export default function GamePage() {
   const isProcessingTurn = useGameStore(state => state.isProcessingTurn);
   const error = useGameStore(state => state.error);
   const processNextTurn = useGameStore(state => state.processNextTurn);
+  const processHumanAction = useGameStore(state => state.processHumanAction);
+  const agents = useGameStore(state => state.agents);
   const startNewHand = useGameStore(state => state.startNewHand);
   const clearError = useGameStore(state => state.clearError);
   const reset = useGameStore(state => state.reset);
@@ -73,6 +75,7 @@ export default function GamePage() {
 
   // Local state
   const [isPlaying, setIsPlaying] = useState(false);
+  const [raiseAmount, setRaiseAmount] = useState<number>(0);
 
   // Redirect if no game
   useEffect(() => {
@@ -84,6 +87,12 @@ export default function GamePage() {
   // Auto-play loop
   useEffect(() => {
     if (!isPlaying || !gameState || gameState.isHandComplete || isProcessingTurn) {
+      return;
+    }
+
+    // Pause auto-play when it's the human's turn
+    const current = getCurrentPlayer(gameState);
+    if (current && !current.isAI) {
       return;
     }
 
@@ -164,6 +173,17 @@ export default function GamePage() {
   }
 
   const showAllCards = viewMode === 'transparent' || gameState.bettingRound === 'showdown';
+
+  // Determine if it's the human's turn
+  const currentPlayer = getCurrentPlayer(gameState);
+  const isHumanTurn = !gameState.isHandComplete && currentPlayer && !currentPlayer.isAI;
+  const humanAgent = agents.find(a => a.isHuman);
+  const validActions = isHumanTurn ? getValidActions(gameState) : [];
+  const callAmount = isHumanTurn && currentPlayer
+    ? Math.max(0, gameState.currentBet - currentPlayer.currentBet)
+    : 0;
+  const minRaise = gameState.currentBet + gameState.minimumRaise;
+  const maxRaise = currentPlayer ? currentPlayer.chips + currentPlayer.currentBet : 0;
 
   // Calculate seat positions
   const getSeatPosition = (index: number, total: number) => {
@@ -481,56 +501,173 @@ export default function GamePage() {
               </button>
             </div>
 
-            {/* Playback controls */}
-            {!gameState.isHandComplete ? (
-              <>
+            {/* Human Action Controls */}
+            {isHumanTurn && currentPlayer ? (
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(99,102,241,0.15))',
+                border: '1px solid rgba(139,92,246,0.4)',
+                borderRadius: '16px',
+                padding: '20px 24px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '14px',
+                minWidth: '340px',
+              }}>
+                <div style={{ color: '#c4b5fd', fontWeight: 700, fontSize: '14px', textAlign: 'center' }}>
+                  🧑 Your Turn — {currentPlayer.name}
+                </div>
+
+                {/* Your cards summary */}
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  {currentPlayer.holeCards.map((card, i) => (
+                    <div key={i} style={{
+                      background: 'white',
+                      borderRadius: '6px',
+                      padding: '4px 10px',
+                      fontWeight: 'bold',
+                      fontSize: '18px',
+                      color: card.suit === 'hearts' || card.suit === 'diamonds' ? '#dc2626' : '#111827',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    }}>
+                      {card.rank === 'T' ? '10' : card.rank}
+                      {card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}
+                    </div>
+                  ))}
+                  <div style={{ color: '#9ca3af', fontSize: '13px', alignSelf: 'center', marginLeft: '8px' }}>
+                    To call: <strong style={{ color: 'white' }}>${callAmount}</strong>
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  {validActions.includes('fold') && (
+                    <button
+                      onClick={() => processHumanAction({ type: 'fold', playerId: currentPlayer.id })}
+                      style={{
+                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
+                        fontWeight: 700, fontSize: '14px',
+                        background: 'rgba(239,68,68,0.2)', color: '#f87171',
+                        border: '1px solid rgba(239,68,68,0.3)',
+                      }}
+                    >✕ Fold</button>
+                  )}
+                  {validActions.includes('check') && (
+                    <button
+                      onClick={() => processHumanAction({ type: 'check', playerId: currentPlayer.id })}
+                      style={{
+                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
+                        fontWeight: 700, fontSize: '14px',
+                        background: 'rgba(107,114,128,0.2)', color: '#d1d5db',
+                        border: '1px solid rgba(107,114,128,0.3)',
+                      }}
+                    >✓ Check</button>
+                  )}
+                  {validActions.includes('call') && (
+                    <button
+                      onClick={() => processHumanAction({ type: 'call', playerId: currentPlayer.id })}
+                      style={{
+                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
+                        fontWeight: 700, fontSize: '14px',
+                        background: 'rgba(59,130,246,0.2)', color: '#60a5fa',
+                        border: '1px solid rgba(59,130,246,0.3)',
+                      }}
+                    >📞 Call ${callAmount}</button>
+                  )}
+                  {validActions.includes('all_in') && (
+                    <button
+                      onClick={() => processHumanAction({ type: 'all_in', playerId: currentPlayer.id })}
+                      style={{
+                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
+                        fontWeight: 700, fontSize: '14px',
+                        background: 'linear-gradient(135deg, rgba(168,85,247,0.3), rgba(236,72,153,0.3))', color: '#e879f9',
+                        border: '1px solid rgba(168,85,247,0.4)',
+                      }}
+                    >🚀 All-In</button>
+                  )}
+                </div>
+
+                {/* Raise controls */}
+                {validActions.includes('raise') && (
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'center' }}>
+                    <input
+                      type="number"
+                      value={raiseAmount || minRaise}
+                      min={minRaise}
+                      max={maxRaise}
+                      onChange={e => setRaiseAmount(Number(e.target.value))}
+                      style={{
+                        width: '100px', padding: '10px 12px', borderRadius: '8px',
+                        background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.15)',
+                        color: 'white', fontSize: '14px', textAlign: 'center',
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        const amount = raiseAmount > 0 ? raiseAmount : minRaise;
+                        processHumanAction({ type: 'raise', amount, playerId: currentPlayer.id });
+                      }}
+                      style={{
+                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
+                        fontWeight: 700, fontSize: '14px',
+                        background: 'linear-gradient(135deg, rgba(234,179,8,0.3), rgba(217,119,6,0.3))', color: '#fbbf24',
+                        border: '1px solid rgba(234,179,8,0.4)',
+                      }}
+                    >⬆ Raise</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Playback controls (AI only) */
+              !gameState.isHandComplete ? (
+                <>
+                  <button
+                    onClick={() => setIsPlaying(!isPlaying)}
+                    style={{
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      background: isPlaying ? 'rgba(234,179,8,0.2)' : 'rgba(34,197,94,0.2)',
+                      color: isPlaying ? '#facc15' : '#4ade80',
+                    }}
+                  >
+                    {isPlaying ? '⏸ Pause' : '▶ Play'}
+                  </button>
+                  <button
+                    onClick={() => processNextTurn()}
+                    disabled={isProcessingTurn}
+                    style={{
+                      padding: '12px 24px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      cursor: isProcessingTurn ? 'not-allowed' : 'pointer',
+                      fontWeight: 600,
+                      background: 'rgba(59,130,246,0.2)',
+                      color: '#60a5fa',
+                      opacity: isProcessingTurn ? 0.5 : 1,
+                    }}
+                  >
+                    ⏭ Next
+                  </button>
+                </>
+              ) : (
                 <button
-                  onClick={() => setIsPlaying(!isPlaying)}
+                  onClick={handleNewHand}
                   style={{
-                    padding: '12px 24px',
+                    padding: '16px 32px',
                     borderRadius: '12px',
                     border: 'none',
                     cursor: 'pointer',
-                    fontWeight: 600,
-                    background: isPlaying ? 'rgba(234,179,8,0.2)' : 'rgba(34,197,94,0.2)',
-                    color: isPlaying ? '#facc15' : '#4ade80',
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                    color: 'white',
                   }}
                 >
-                  {isPlaying ? '⏸ Pause' : '▶ Play'}
+                  🃏 Deal New Hand
                 </button>
-                <button
-                  onClick={() => processNextTurn()}
-                  disabled={isProcessingTurn}
-                  style={{
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    cursor: isProcessingTurn ? 'not-allowed' : 'pointer',
-                    fontWeight: 600,
-                    background: 'rgba(59,130,246,0.2)',
-                    color: '#60a5fa',
-                    opacity: isProcessingTurn ? 0.5 : 1,
-                  }}
-                >
-                  ⏭ Next
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={handleNewHand}
-                style={{
-                  padding: '16px 32px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
-                  color: 'white',
-                }}
-              >
-                🃏 Deal New Hand
-              </button>
+              )
             )}
           </div>
         </div>

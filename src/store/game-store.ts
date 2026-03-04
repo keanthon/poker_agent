@@ -76,8 +76,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const players = agents.map(agent => ({
       id: agent.id,
       name: agent.name,
-      chips: 1000, // Default starting chips
-      isAI: true,
+      chips: 1000,
+      isAI: !agent.isHuman, // Human players are not AI
       profileImage: agent.profileImage,
     }));
 

@@ -108,6 +108,25 @@ export default function AgentsPage() {
     setSelectedIds(new Set(registeredAgents.map(a => a.id)));
   };
 
+  const humanAgent = registeredAgents.find(a => a.isHuman);
+
+  const handlePlayAsYourself = () => {
+    if (humanAgent) {
+      // Remove existing human seat
+      removeAgent(humanAgent.id);
+    } else {
+      // Register a human player slot
+      const newAgent = registerAgent({
+        name: 'You',
+        apiUrl: '',
+        apiKey: '',
+        profileImage: '🧑',
+        isHuman: true,
+      });
+      setSelectedIds(prev => new Set([...prev, newAgent.id]));
+    }
+  };
+
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
@@ -283,6 +302,29 @@ export default function AgentsPage() {
           >
             <span style={{ fontSize: '20px' }}>+</span>
             Add Agent
+          </button>
+
+          {/* Play as Yourself toggle */}
+          <button
+            onClick={handlePlayAsYourself}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              background: humanAgent
+                ? 'linear-gradient(135deg, rgba(239,68,68,0.2), rgba(220,38,38,0.2))'
+                : 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(16,185,129,0.15))',
+              color: humanAgent ? '#f87171' : '#4ade80',
+              fontWeight: 600,
+              fontSize: '16px',
+              padding: '14px 28px',
+              borderRadius: '12px',
+              border: humanAgent ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(34,197,94,0.3)',
+              cursor: 'pointer',
+            }}
+          >
+            <span style={{ fontSize: '20px' }}>{humanAgent ? '✕' : '🧑'}</span>
+            {humanAgent ? 'Remove Yourself' : 'Play as Yourself'}
           </button>
 
           {registeredAgents.length > 0 && (

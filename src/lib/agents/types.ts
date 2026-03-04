@@ -10,9 +10,10 @@ export interface AIAgent {
   apiKey: string;
   profileImage: string;
   personality?: string;
-  voiceId?: string; // For TTS differentiation
-  model?: string; // AI model to use (e.g., gpt-4o-mini, grok-2-1212)
-  customPrompt?: string; // Custom instructions prepended to the system prompt
+  voiceId?: string;
+  model?: string;
+  customPrompt?: string;
+  isHuman?: boolean; // If true, this player is controlled by a human
 }
 
 // Agent's internal thought process
@@ -97,11 +98,12 @@ export interface StoredAgent {
   id: string;
   name: string;
   apiUrl: string;
-  apiKey: string; // Should be encrypted in production
+  apiKey: string;
   profileImage: string;
   personality?: string;
   voiceId?: string;
-  model?: string; // AI model to use
-  customPrompt?: string; // Custom instructions prepended to the system prompt
+  model?: string;
+  customPrompt?: string;
+  isHuman?: boolean;
   createdAt: number;
 }
