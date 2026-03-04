@@ -1,11 +1,53 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useGameStore, useSettingsStore } from '@/store';
 import { tts, speakWithPersonality } from '@/lib/audio/tts';
+import { PlayerState } from '@/lib/poker';
+
+function PlayerAvatar({ player, isCurrentTurn }: { player: PlayerState; isCurrentTurn: boolean }) {
+  const [imgError, setImgError] = useState(false);
+  return (
+    <div style={{
+      width: '60px',
+      height: '60px',
+      borderRadius: '12px',
+      overflow: 'hidden',
+      border: isCurrentTurn ? '3px solid #facc15' : '3px solid rgba(255,255,255,0.2)',
+      boxShadow: isCurrentTurn ? '0 0 20px rgba(250,204,21,0.5)' : 'none',
+      margin: '0 auto 8px',
+      position: 'relative',
+      flexShrink: 0,
+    }}>
+      {player.profileImage && !imgError ? (
+        <Image
+          src={player.profileImage}
+          alt={player.name}
+          fill
+          style={{ objectFit: 'cover', objectPosition: 'center top' }}
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '24px',
+          fontWeight: 'bold',
+        }}>
+          {player.name.charAt(0).toUpperCase()}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function GamePage() {
   const router = useRouter();
@@ -194,15 +236,14 @@ export default function GamePage() {
       )}
 
       {/* Main content */}
-      <div style={{ display: 'flex', gap: '20px', flex: 1, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', gap: '20px', flex: 1, overflow: 'hidden', minHeight: 0 }}>
         {/* Poker Table */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{
             position: 'relative',
             width: '100%',
-            maxWidth: '800px',
+            maxWidth: '900px',
             aspectRatio: '16/10',
-            margin: '0 auto',
           }}>
             {/* Table */}
             <div style={{
@@ -290,40 +331,7 @@ export default function GamePage() {
                   }}
                 >
                   {/* Avatar */}
-                  <div style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: isCurrentTurn ? '3px solid #facc15' : '3px solid rgba(255,255,255,0.2)',
-                    boxShadow: isCurrentTurn ? '0 0 20px rgba(250,204,21,0.5)' : 'none',
-                    margin: '0 auto 8px',
-                    position: 'relative',
-                  }}>
-                    {player.profileImage ? (
-                      <Image
-                        src={player.profileImage}
-                        alt={player.name}
-                        width={60}
-                        height={60}
-                        style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                      />
-                    ) : (
-                      <div style={{
-                        width: '100%',
-                        height: '100%',
-                        background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                      }}>
-                        {player.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
+                  <PlayerAvatar player={player} isCurrentTurn={isCurrentTurn} />
 
                   {/* Name & chips */}
                   <div style={{ color: 'white', fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>
