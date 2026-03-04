@@ -1,4 +1,4 @@
-# AI Poker Arena
+# AI Poker Arena 🃏🤖
 
 **Practice your poker skills against AI-powered opponents.**
 
@@ -8,13 +8,13 @@ AI Poker Arena is a hands-on poker training tool. Sit at a Texas Hold'em table a
 
 ---
 
-## Features
+## Features ✨
 
-### Play as Yourself
+### Play as Yourself 👤
 
 Take a seat at the table alongside AI agents. You make every decision — fold, check, call, raise, or go all-in — using real poker logic against opponents that adapt, bluff, and trash talk. Your hole cards are always visible to you, and all standard Texas Hold'em rules are enforced: only legal actions are presented, bet sizing is validated, and pot/side-pot calculations are handled automatically.
 
-### Watch AI Agents Play Each Other
+### Watch AI Agents Play Each Other 🍿
 
 You don't have to play to learn. Set up a table of AI agents and sit back while they play full hands against each other. Use this mode to study AI decision-making, observe bluffing patterns, compare different model strategies, or simply enjoy the chaos.
 
@@ -22,7 +22,7 @@ Use the playback controls to let the game run on autopilot, or step through one 
 
 
 
-### Bring Your Own Agents (BYOK)
+### Bring Your Own Agents (BYOK) 🔑
 
 Register custom AI agents using any OpenAI-compatible chat completions API. Each agent is configured with:
 
@@ -34,14 +34,14 @@ Register custom AI agents using any OpenAI-compatible chat completions API. Each
 
 The app ships with preconfigured agent templates (AssGPT, AdamGrok, BillyGrok) that you can use immediately by adding your API key.
 
-### Transparent and Player View Modes
+### Transparent and Player View Modes 👁️
 
 Two viewing modes let you control how much information is visible during gameplay:
 
 - **Player Mode** (default) — Simulates a real poker experience. Opponent hole cards are hidden until showdown. AI reasoning and internal thoughts are completely hidden from the Table Talk sidebar. This is the mode you should use when practicing.
 - **Transparent Mode** — Reveals all hole cards for every player, and unlocks the AI's internal reasoning in the Table Talk sidebar. Each chat message gains a "Reveal Internal Thought" expandable showing the model's full strategic analysis — hand strength evaluation, pot odds calculations, opponent reads, and decision rationale. This mode is designed for studying how the AI thinks.
 
-### Full Texas Hold'em Engine
+### Full Texas Hold'em Engine ♠️♥️♣️♦️
 
 The game engine implements complete Texas Hold'em poker rules:
 
@@ -52,25 +52,25 @@ The game engine implements complete Texas Hold'em poker rules:
 - **Hand evaluation**: Automatic hand ranking and winner determination at showdown
 - **Position tracking**: Dealer, Small Blind, Big Blind, Early, Middle, and Late positions are calculated and communicated to each AI agent
 
-### Table Talk
+### Table Talk 💬
 
 AI agents generate natural-language commentary during play. Each agent speaks in character based on their custom prompt — some trash talk, some stay analytical, some bluff verbally. Messages appear in the Table Talk sidebar alongside the game action.
 
 In Transparent Mode, each chat message can be expanded to reveal the agent's private internal thought process — what they were actually thinking when they said something. This lets you spot deceptive table talk (e.g., an agent claiming to have a strong hand while their internal thought reveals they're bluffing).
 
-### Voice Over (Text-to-Speech)
+### Voice Over (Text-to-Speech) 🔊
 
 AI agents speak their table talk aloud using the browser's Web Speech API. Each agent is assigned a distinct voice, and different speech presets (confident, nervous, aggressive, friendly) adjust the rate, pitch, and volume to match the tone of the message.
 
 Voice over can be toggled on and off during gameplay using the Voice button in the control bar.
 
-### PK Mode
+### PK Mode 🥊
 
 PK Mode activates during heads-up play (when only 2 players remain). When enabled, the AI's internal reasoning is spoken aloud via TTS *before* their table talk. This creates a commentator-like experience where you hear the model's full thought process — hand analysis, opponent reads, and strategic calculations — followed by whatever they chose to say at the table.
 
 PK Mode is only active during heads-up to keep the experience focused. It requires voice over to be enabled.
 
-### Playback Controls
+### Playback Controls ⏯️
 
 When not playing as yourself, you can control how the AI game progresses:
 
@@ -80,7 +80,7 @@ When not playing as yourself, you can control how the AI game progresses:
 
 When it is your turn (if you're playing as yourself), auto-play automatically pauses and presents your action options.
 
-### AI Agent Architecture
+### AI Agent Architecture 🧠
 
 Each AI agent makes decisions through a tool-calling interface. On every turn, the agent receives the full game state — their hole cards, community cards, pot size, position, opponent chip counts, valid actions, and the complete hand history from previous rounds. The agent responds with up to three simultaneous tool calls:
 
@@ -92,7 +92,7 @@ All three are requested in a single API call to minimize latency. The hand histo
 
 ---
 
-## Recommended Models
+## Recommended Models 🚀
 
 For the best experience, use fast inference models that keep the game flowing at a natural pace. Slower reasoning models will introduce noticeable delays between turns.
 
@@ -108,7 +108,7 @@ Any provider that implements the OpenAI chat completions format will work. When 
 
 ---
 
-## Setup
+## Setup ⚙️
 
 ### Prerequisites
 
@@ -136,7 +136,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## Security and Privacy
+## Security and Privacy 🛡️
 
 This application uses a strict Bring Your Own Key (BYOK) model:
 
