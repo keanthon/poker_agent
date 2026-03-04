@@ -59,6 +59,7 @@ export default function GamePage() {
   // Local state
   const [isPlaying, setIsPlaying] = useState(false);
   const [raiseAmount, setRaiseAmount] = useState<number>(0);
+  const [tableTalkMsg, setTableTalkMsg] = useState('');
 
   // Redirect if no game
   useEffect(() => {
@@ -394,25 +395,25 @@ export default function GamePage() {
                 <div style={styles.humanActionsContainer}>
                   {validActions.includes('fold') && (
                     <button
-                      onClick={() => processHumanAction({ type: 'fold', playerId: currentPlayer.id })}
+                      onClick={() => { processHumanAction({ type: 'fold', playerId: currentPlayer.id }, tableTalkMsg); setTableTalkMsg(''); }}
                       style={styles.btnFold}
                     >✕ Fold</button>
                   )}
                   {validActions.includes('check') && (
                     <button
-                      onClick={() => processHumanAction({ type: 'check', playerId: currentPlayer.id })}
+                      onClick={() => { processHumanAction({ type: 'check', playerId: currentPlayer.id }, tableTalkMsg); setTableTalkMsg(''); }}
                       style={styles.btnCheck}
                     >✓ Check</button>
                   )}
                   {validActions.includes('call') && (
                     <button
-                      onClick={() => processHumanAction({ type: 'call', playerId: currentPlayer.id })}
+                      onClick={() => { processHumanAction({ type: 'call', playerId: currentPlayer.id }, tableTalkMsg); setTableTalkMsg(''); }}
                       style={styles.btnCall}
                     >📞 Call ${callAmount}</button>
                   )}
                   {validActions.includes('all_in') && (
                     <button
-                      onClick={() => processHumanAction({ type: 'all_in', playerId: currentPlayer.id })}
+                      onClick={() => { processHumanAction({ type: 'all_in', playerId: currentPlayer.id }, tableTalkMsg); setTableTalkMsg(''); }}
                       style={styles.btnAllIn}
                     >🚀 All-In</button>
                   )}
@@ -432,12 +433,42 @@ export default function GamePage() {
                     <button
                       onClick={() => {
                         const amount = raiseAmount > 0 ? raiseAmount : minRaise;
-                        processHumanAction({ type: 'raise', amount, playerId: currentPlayer.id });
+                        processHumanAction({ type: 'raise', amount, playerId: currentPlayer.id }, tableTalkMsg);
+                        setTableTalkMsg('');
                       }}
                       style={styles.btnRaise}
                     >⬆ Raise</button>
                   </div>
                 )}
+
+                {/* Table Talk Input */}
+                <div style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginTop: '6px',
+                  borderTop: '1px solid rgba(255,255,255,0.1)',
+                  paddingTop: '10px',
+                }}>
+                  <input
+                    type="text"
+                    value={tableTalkMsg}
+                    onChange={e => setTableTalkMsg(e.target.value)}
+                    placeholder="Talk trash... (optional)"
+                    style={{
+                      flex: 1,
+                      background: 'rgba(0,0,0,0.3)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      color: 'white',
+                      fontSize: '13px',
+                      outline: 'none',
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') e.preventDefault();
+                    }}
+                  />
+                </div>
               </div>
             ) : (
               /* Playback controls (AI only) */

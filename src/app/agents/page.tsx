@@ -24,10 +24,11 @@ export default function AgentsPage() {
   
   // Form state
   const [name, setName] = useState('');
-  const [apiUrl, setApiUrl] = useState('https://api.openai.com/v1/chat/completions');
+  const [apiUrl, setApiUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
+  const [model, setModel] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Auto-preload and auto-update agents
@@ -128,6 +129,7 @@ export default function AgentsPage() {
         apiKey: apiKey.trim(),
         profileImage: profileImage.trim() || '',
         customPrompt: customPrompt.trim() || undefined,
+        model: model.trim() || undefined,
       });
       setEditingId(null);
     } else {
@@ -137,6 +139,7 @@ export default function AgentsPage() {
         apiKey: apiKey.trim(),
         profileImage: profileImage.trim() || '',
         customPrompt: customPrompt.trim() || undefined,
+        model: model.trim() || undefined,
       });
     }
     
@@ -144,6 +147,7 @@ export default function AgentsPage() {
     setApiKey('');
     setProfileImage('');
     setCustomPrompt('');
+    setModel('');
     setShowForm(false);
   };
 
@@ -207,10 +211,11 @@ export default function AgentsPage() {
                 setShowForm(false);
               } else {
                 setName('');
-                setApiUrl('https://api.openai.com/v1/chat/completions');
+                setApiUrl('');
                 setApiKey('');
                 setProfileImage('');
                 setCustomPrompt('');
+                setModel('');
                 setEditingId(null);
                 setShowForm(true);
               }
@@ -288,6 +293,28 @@ export default function AgentsPage() {
                   value={apiUrl}
                   onChange={(e) => setApiUrl(e.target.value)}
                   style={styles.formInputSecondary}
+                  required
+                />
+              </div>
+
+              <div style={styles.formGroup}>
+                <label style={styles.formLabel}>
+                  Model Name *
+                </label>
+                <input
+                  type="text"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  placeholder="e.g., gpt-4o, grok-3, claude-sonnet-4-20250514"
+                  style={styles.formInput}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#ef4444';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                   required
                 />
               </div>
@@ -389,6 +416,7 @@ export default function AgentsPage() {
                       {agent.name}
                     </h3>
                     <p style={styles.agentApiUrl}>
+                      {agent.model && <span style={{ color: '#f59e0b', marginRight: '6px' }}>{agent.model}</span>}
                       {agent.apiUrl}
                     </p>
                   </div>
@@ -407,6 +435,7 @@ export default function AgentsPage() {
                       setApiKey(agent.apiKey);
                       setProfileImage(agent.profileImage);
                       setCustomPrompt(agent.customPrompt || '');
+                      setModel(agent.model || '');
                       setEditingId(agent.id);
                       setShowForm(true);
                       window.scrollTo({ top: 0, behavior: 'smooth' });

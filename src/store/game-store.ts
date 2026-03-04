@@ -50,7 +50,7 @@ interface GameStore {
   createNewGame: (agents: AIAgent[], smallBlind?: number, bigBlind?: number) => void;
   startNewHand: () => void;
   processNextTurn: () => Promise<void>;
-  processHumanAction: (action: PokerAction) => void;
+  processHumanAction: (action: PokerAction, tableTalk?: string) => void;
   addChatMessage: (chat: TableChat) => void;
   selectAgent: (agentId: string | null) => void;
   togglePkMode: () => void;
@@ -213,32 +213,44 @@ export const useGameStore = create<GameStore>((set, get) => ({
       // Store thought
       const thoughts = [...get().thoughts, response.thought];
 
-      // Handle chat if any
+      // Build action display string
+      let actionStr = '';
+      if (gameAction.type === 'raise') {
+         actionStr = `Raises ${gameAction.amount}`;
+      } else if (gameAction.type === 'call') {
+         actionStr = `Calls`; 
+      } else if (gameAction.type === 'all_in') {
+         actionStr = `Goes All-In`;
+      } else if (gameAction.type === 'check') {
+         actionStr = `Checks`;
+      } else {
+         actionStr = `Folds`;
+      }
+
+      // Always create a chat message for the action (even if AI didn't say anything)
       let newChatMessages = [...get().chatMessages];
       if (response.chat) {
         const chatMsg = createChatMessage(agent.id, agent.name, response.chat);
         if (chatMsg) {
           chatMsg.linkedThought = response.thought;
           chatMsg.handId = gameState.handId;
-          
-          // Add formatted action display
-          let actionStr = '';
-          const actionName = gameAction.type.charAt(0).toUpperCase() + gameAction.type.slice(1);
-          if (gameAction.type === 'raise') {
-             actionStr = `Raises ${gameAction.amount}`;
-          } else if (gameAction.type === 'call') {
-             actionStr = `Calls`; 
-          } else if (gameAction.type === 'all_in') {
-             actionStr = `Goes All-In`;
-          } else if (gameAction.type === 'check') {
-             actionStr = `Checks`;
-          } else {
-             actionStr = `Folds`;
-          }
           chatMsg.actionDisplay = actionStr;
-
           newChatMessages.push(chatMsg);
         }
+      } else {
+        // No table talk — create an action-only message
+        const actionMsg: TableChat = {
+          id: `${agent.id}-${Date.now()}`,
+          agentId: agent.id,
+          agentName: agent.name,
+          message: actionStr,
+          tone: 'neutral',
+          type: 'action',
+          timestamp: Date.now(),
+          handId: gameState.handId,
+          actionDisplay: actionStr,
+        };
+        newChatMessages.push(actionMsg);
       }
 
       const newGameState = processAction(gameState, action);
@@ -268,7 +280,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 
-  processHumanAction: (action) => {
+  processHumanAction: (action, tableTalk) => {
     const { gameState, actionHistory, chatMessages } = get();
     if (!gameState || gameState.isHandComplete) return;
 
@@ -304,9 +316,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         id: uuidv4(),
         agentId: currentPlayer.id,
         agentName: currentPlayer.name,
-        message: actionStr,
+        message: tableTalk?.trim() || actionStr,
         tone: 'neutral',
-        type: 'action',
+        type: tableTalk?.trim() ? 'trash_talk' : 'action',
         timestamp: Date.now(),
         handId: gameState.handId,
         actionDisplay: actionStr,

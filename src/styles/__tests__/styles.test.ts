@@ -30,6 +30,41 @@ describe('Style Functions', () => {
       expect(callStyle).toHaveProperty('cursor', 'pointer');
       expect(callStyle).toHaveProperty('background');
     });
+
+    it('controlsContainer uses column layout', () => {
+      const style = gameStyles.controlsContainer;
+      expect(style.flexDirection).toBe('column');
+      expect(style.alignItems).toBe('center');
+      expect(style.display).toBe('flex');
+    });
+
+    it('viewModeBtn has compact font size', () => {
+      const activeStyle = gameStyles.viewModeBtn(true);
+      expect(activeStyle.fontSize).toBe('13px');
+      expect(activeStyle.padding).toBe('6px 14px');
+      expect(activeStyle.background).toContain('#a31d2e');
+
+      const inactiveStyle = gameStyles.viewModeBtn(false);
+      expect(inactiveStyle.background).toBe('transparent');
+    });
+
+    it('pkModeBtn has compact sizing', () => {
+      const activeStyle = gameStyles.pkModeBtn(true);
+      expect(activeStyle.fontSize).toBe('13px');
+      expect(activeStyle.padding).toBe('6px 12px');
+
+      const inactiveStyle = gameStyles.pkModeBtn(false);
+      expect(inactiveStyle.color).toBe('#9ca3af');
+    });
+
+    it('audioBtn has compact sizing with green active state', () => {
+      const activeStyle = gameStyles.audioBtn(true);
+      expect(activeStyle.fontSize).toBe('13px');
+      expect(activeStyle.background).toContain('#22c55e');
+
+      const inactiveStyle = gameStyles.audioBtn(false);
+      expect(inactiveStyle.background).toBe('transparent');
+    });
   });
 
   describe('tableStyles (agentSeatStyles)', () => {

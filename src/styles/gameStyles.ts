@@ -298,10 +298,10 @@ export const gameStyles = {
 
   controlsContainer: {
     display: 'flex',
-    justifyContent: 'center',
-    gap: '15px',
-    marginTop: '30px',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '10px',
+    marginTop: '15px',
   } as CSSProperties,
 
   viewModeToggleContainer: {
@@ -312,35 +312,38 @@ export const gameStyles = {
   } as CSSProperties,
 
   viewModeBtn: (isActive: boolean): CSSProperties => ({
-    padding: '10px 20px',
+    padding: '6px 14px',
     borderRadius: '8px',
     border: 'none',
     cursor: 'pointer',
     fontWeight: 600,
+    fontSize: '13px',
     background: isActive ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
     color: 'white',
   }),
 
   pkModeBtn: (isActive: boolean): CSSProperties => ({
-    padding: '8px 16px',
+    padding: '6px 12px',
     borderRadius: '20px',
     border: '1px solid rgba(255,255,255,0.1)',
     cursor: 'pointer',
     fontWeight: 600,
+    fontSize: '13px',
     background: isActive ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
     color: isActive ? 'white' : '#9ca3af',
-    marginLeft: '10px',
+    marginLeft: '6px',
   }),
 
   audioBtn: (isActive: boolean): CSSProperties => ({
-    padding: '8px 16px',
+    padding: '6px 12px',
     borderRadius: '20px',
     border: '1px solid rgba(255,255,255,0.1)',
     cursor: 'pointer',
     fontWeight: 600,
+    fontSize: '13px',
     background: isActive ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'transparent',
     color: isActive ? 'white' : '#9ca3af',
-    marginLeft: '10px',
+    marginLeft: '6px',
   }),
 
   humanControlsPanel: {
