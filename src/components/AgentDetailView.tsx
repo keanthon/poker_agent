@@ -9,7 +9,8 @@ import { AgentThought, TableChat } from '@/lib/agents';
 import { PlayingCard } from './Card';
 import { useSettingsStore } from '@/store';
 import { useEffect } from 'react';
-import { speakWithPersonality, tts } from '@/lib/audio';
+import { speakWithPersonality } from '@/lib/audio';
+import { agentDetailViewStyles } from '@/styles/tableStyles';
 
 interface AgentDetailViewProps {
   player: PlayerState;
@@ -149,7 +150,7 @@ export function AgentDetailView({ player, thoughts, chats, onClose }: AgentDetai
                                 ? 'bg-yellow-500' 
                                 : 'bg-red-500'
                           }`}
-                          style={{ width: `${thought.confidence}%` }}
+                          style={agentDetailViewStyles.confidenceBar(thought.confidence)}
                         />
                       </div>
                       <span className="text-gray-300 text-xs">{thought.confidence}%</span>

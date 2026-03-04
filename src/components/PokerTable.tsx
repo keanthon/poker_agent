@@ -6,6 +6,7 @@ import { AgentThought } from '@/lib/agents';
 import { AgentSeat } from './AgentSeat';
 import { PlayingCard } from './Card';
 import { useSettingsStore } from '@/store';
+import { pokerTableStyles } from '@/styles/tableStyles';
 
 interface PokerTableProps {
   gameState: GameState;
@@ -34,10 +35,7 @@ export function PokerTable({ gameState, thoughts, onAgentClick }: PokerTableProp
         <div className="w-full h-full rounded-[50%] bg-gradient-to-br from-red-900 via-red-950 to-black relative overflow-hidden">
           {/* Felt texture pattern */}
           <div className="absolute inset-0 opacity-40">
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,0,0,0.3) 1px, transparent 0)',
-              backgroundSize: '16px 16px',
-            }} />
+            <div className="absolute inset-0" style={pokerTableStyles.feltTexture} />
           </div>
           
           {/* Inner felt border */}
@@ -68,7 +66,7 @@ export function PokerTable({ gameState, thoughts, onAgentClick }: PokerTableProp
                 <div
                   key={i}
                   className="w-8 h-8 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-600 border-2 border-yellow-300 shadow-md flex items-center justify-center"
-                  style={{ transform: `translateY(-${i * 2}px)` }}
+                  style={pokerTableStyles.chipStackWrapper(i)}
                 >
                   <div className="w-5 h-5 rounded-full border border-yellow-200/50" />
                 </div>

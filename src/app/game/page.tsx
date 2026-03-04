@@ -8,41 +8,22 @@ import { isValidImageSrc } from '@/lib/utils/image';
 import { useGameStore, useSettingsStore } from '@/store';
 import { tts, speakWithPersonality } from '@/lib/audio/tts';
 import { PlayerState, getCurrentPlayer, getValidActions } from '@/lib/poker';
+import { gameStyles as styles } from '@/styles/gameStyles';
 
 function PlayerAvatar({ player, isCurrentTurn }: { player: PlayerState; isCurrentTurn: boolean }) {
   const [imgError, setImgError] = useState(false);
   return (
-    <div style={{
-      width: '60px',
-      height: '60px',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      border: isCurrentTurn ? '3px solid #facc15' : '3px solid rgba(255,255,255,0.2)',
-      boxShadow: isCurrentTurn ? '0 0 20px rgba(250,204,21,0.5)' : 'none',
-      margin: '0 auto 8px',
-      position: 'relative',
-      flexShrink: 0,
-    }}>
+    <div style={styles.playerAvatarContainer(isCurrentTurn)}>
       {isValidImageSrc(player.profileImage) && !imgError ? (
         <Image
-          src={player.profileImage}
+          src={player.profileImage!}
           alt={player.name}
           fill
           style={{ objectFit: 'cover', objectPosition: 'center top' }}
           onError={() => setImgError(true)}
         />
       ) : (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          background: 'linear-gradient(135deg, #dc2626, #7f1d1d)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '24px',
-          fontWeight: 'bold',
-        }}>
+        <div style={styles.playerAvatarFallback}>
           {player.name.charAt(0).toUpperCase()}
         </div>
       )}
@@ -199,42 +180,18 @@ export default function GamePage() {
   };
 
   return (
-    <div style={{
-      height: '100vh',
-      background: 'linear-gradient(135deg, #2d0a13 0%, #1a0508 50%, #0a0002 100%)',
-      padding: '20px',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-    }}>
+    <div style={styles.pageContainer}>
       {/* Header */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '20px',
-      }}>
-        <Link href="/agents" style={{ color: '#9ca3af', textDecoration: 'none' }}>
+      <div style={styles.headerContainer}>
+        <Link href="/agents" style={styles.backLink}>
           ← Back
         </Link>
-        <h1 style={{
-          fontSize: '24px',
-          fontWeight: 900,
-          background: 'linear-gradient(135deg, #ffb3b8, #da2b3f)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          margin: 0,
-        }}>
+        <h1 style={styles.title}>
           AI Poker Arena
         </h1>
         <button
           onClick={handleRestart}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#9ca3af',
-            cursor: 'pointer',
-          }}
+          style={styles.newGameButton}
         >
           New Game
         </button>
@@ -242,178 +199,98 @@ export default function GamePage() {
 
       {/* Error display */}
       {error && (
-        <div style={{
-          background: 'rgba(239, 68, 68, 0.2)',
-          border: '1px solid rgba(239, 68, 68, 0.5)',
-          borderRadius: '12px',
-          padding: '16px',
-          marginBottom: '20px',
-          color: '#fca5a5',
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}>
+        <div style={styles.errorContainer}>
           <span>{error}</span>
-          <button onClick={clearError} style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer' }}>✕</button>
+          <button onClick={clearError} style={styles.errorCloseBtn}>✕</button>
         </div>
       )}
 
       {/* Main content */}
-      <div style={{ display: 'flex', gap: '20px', flex: 1, overflow: 'hidden', minHeight: 0 }}>
+      <div style={styles.mainContent}>
         {/* Poker Table */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            maxWidth: '900px',
-            aspectRatio: '16/10',
-          }}>
+        <div style={styles.tableArea}>
+          <div style={styles.tableWrapper}>
             {/* Table */}
-            <div style={{
-              position: 'absolute',
-              inset: '10%',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #166534, #15803d)',
-              border: '12px solid #78350f',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 2px 20px rgba(255,255,255,0.1)',
-            }}>
+            <div style={styles.tableBorder}>
               {/* Center info */}
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                textAlign: 'center',
-              }}>
-                <div style={{
-                  background: 'rgba(0,0,0,0.6)',
-                  borderRadius: '12px',
-                  padding: '12px 24px',
-                  marginBottom: '10px',
-                }}>
-                  <div style={{ color: '#facc15', fontSize: '12px', textTransform: 'uppercase' }}>Pot</div>
-                  <div style={{ color: 'white', fontSize: '28px', fontWeight: 'bold' }}>${gameState.pot}</div>
+              <div style={styles.tableCenterInfo}>
+                <div style={styles.potContainer}>
+                  <div style={styles.potLabel}>Pot</div>
+                  <div style={styles.potAmount}>${gameState.pot}</div>
                 </div>
-                <div style={{
-                  background: 'rgba(0,0,0,0.4)',
-                  borderRadius: '20px',
-                  padding: '6px 16px',
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: '14px',
-                  textTransform: 'uppercase',
-                }}>
+                <div style={styles.bettingRoundText}>
                   {gameState.bettingRound}
                 </div>
               </div>
 
               {/* Community cards */}
-              <div style={{
-                position: 'absolute',
-                top: '25%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                gap: '8px',
-              }}>
-                {gameState.communityCards.map((card, i) => (
-                  <div key={i} style={{
-                    width: '50px',
-                    height: '70px',
-                    background: 'white',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                    fontSize: '16px',
-                    color: card.suit === 'hearts' || card.suit === 'diamonds' ? '#dc2626' : '#1f2937',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-                  }}>
-                    {card.rank === 'T' ? '10' : card.rank}{card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}
-                  </div>
-                ))}
+              <div style={styles.communityCardsContainer}>
+                {gameState.communityCards.map((card, i) => {
+                  const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
+                  return (
+                    <div key={i} style={styles.communityCard(isRed)}>
+                      {card.rank === 'T' ? '10' : card.rank}{card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Players */}
             {gameState.players.map((player, index) => {
               const pos = getSeatPosition(index, gameState.players.length);
-              const thought = latestThoughts.get(player.id);
               const isCurrentTurn = index === gameState.currentPlayerIndex && !gameState.isHandComplete;
               
               return (
                 <div
                   key={player.id}
-                  style={{
-                    position: 'absolute',
-                    left: pos.left,
-                    top: pos.top,
-                    transform: 'translate(-50%, -50%)',
-                    textAlign: 'center',
-                    opacity: player.hasFolded ? 0.4 : 1,
-                  }}
+                  style={styles.playerSeat(pos.left, pos.top, player.hasFolded)}
                 >
                   {/* Avatar */}
                   <PlayerAvatar player={player} isCurrentTurn={isCurrentTurn} />
 
                   {/* Name & chips */}
-                  <div style={{ color: 'white', fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>
+                  <div style={styles.playerName}>
                     {player.name}
                   </div>
-                  <div style={{ color: '#facc15', fontSize: '12px' }}>
+                  <div style={styles.playerChips}>
                     ${player.chips}
                   </div>
 
                   {/* Current bet */}
                   {player.currentBet > 0 && (
-                    <div style={{
-                      background: 'linear-gradient(135deg, #ca8a04, #a16207)',
-                      color: 'white',
-                      fontSize: '11px',
-                      padding: '4px 10px',
-                      borderRadius: '20px',
-                      marginTop: '6px',
-                    }}>
+                    <div style={styles.playerCurrentBet}>
                       ${player.currentBet}
                     </div>
                   )}
 
                   {/* Hole cards */}
-                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', marginTop: '8px' }}>
-                    {player.holeCards.map((card, i) => (
-                      <div key={i} style={{
-                        width: '35px',
-                        height: '50px',
-                        background: showAllCards ? 'white' : 'linear-gradient(135deg, #1e3a8a, #1e40af)',
-                        borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: showAllCards ? (card.suit === 'hearts' || card.suit === 'diamonds' ? '#dc2626' : '#1f2937') : 'transparent',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                      }}>
-                        {showAllCards ? `${card.rank === 'T' ? '10' : card.rank}${card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}` : ''}
-                      </div>
-                    ))}
+                  <div style={styles.holeCardsContainer}>
+                    {player.holeCards.map((card, i) => {
+                      const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
+                      return (
+                        <div key={i} style={styles.holeCard(showAllCards, isRed)}>
+                          {showAllCards ? `${card.rank === 'T' ? '10' : card.rank}${card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}` : ''}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Status badges */}
-                  {/* Status badges */}
                   {player.hasFolded ? (
-                    <div style={{ background: '#dc2626', color: 'white', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', marginTop: '6px', fontWeight: 'bold' }}>FOLDED</div>
+                    <div style={styles.badgeFolded}>FOLDED</div>
                   ) : player.isAllIn ? (
-                    <div style={{ background: 'linear-gradient(135deg, #7c3aed, #db2777)', color: 'white', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', marginTop: '6px', fontWeight: 'bold' }}>ALL IN</div>
+                    <div style={styles.badgeAllIn}>ALL IN</div>
                   ) : gameState.lastAction?.playerId === player.id ? (
-                     <div style={{ background: '#2563eb', color: 'white', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', marginTop: '6px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                     <div style={styles.badgeAction}>
                        {gameState.lastAction.type} {gameState.lastAction.amount ? `$${gameState.lastAction.amount}` : ''}
                      </div>
                   ) : player.currentBet > 0 ? (
-                     <div style={{ background: '#ca8a04', color: 'white', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', marginTop: '6px', fontWeight: 'bold' }}>
+                     <div style={styles.badgeBet}>
                        ${player.currentBet}
                      </div>
                   ) : player.hasActed ? (
-                     <div style={{ background: '#4b5563', color: 'white', fontSize: '10px', padding: '2px 8px', borderRadius: '4px', marginTop: '6px', fontWeight: 'bold' }}>CHECK</div>
+                     <div style={styles.badgeCheck}>CHECK</div>
                   ) : null}
 
 
@@ -423,19 +300,9 @@ export default function GamePage() {
 
             {/* Winner announcement */}
             {gameState.isHandComplete && gameState.winners.length > 0 && (
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                background: 'linear-gradient(135deg, #ca8a04, #a16207)',
-                borderRadius: '16px',
-                padding: '20px 40px',
-                zIndex: 20,
-                textAlign: 'center',
-              }}>
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>🏆</div>
-                <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>
+              <div style={styles.winnerAnnouncement}>
+                <div style={styles.winnerIcon}>🏆</div>
+                <div style={styles.winnerText}>
                   {gameState.winners.map(id => gameState.players.find(p => p.id === id)?.name).join(' & ')} wins!
                 </div>
               </div>
@@ -443,77 +310,32 @@ export default function GamePage() {
           </div>
 
           {/* Controls */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '15px',
-            marginTop: '30px',
-            flexWrap: 'wrap',
-          }}>
+          <div style={styles.controlsContainer}>
             {/* View mode toggle */}
-            <div style={{
-              display: 'flex',
-              background: 'rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-              padding: '4px',
-            }}>
+            <div style={styles.viewModeToggleContainer}>
               <button
                 onClick={() => setViewMode('transparent')}
-                style={{
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  background: viewMode === 'transparent' ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
-                  color: 'white',
-                }}
+                style={styles.viewModeBtn(viewMode === 'transparent')}
               >
                 👁 Transparent
               </button>
               <button
                 onClick={() => setViewMode('player')}
-                style={{
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  background: viewMode === 'player' ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
-                  color: 'white',
-                }}
+                style={styles.viewModeBtn(viewMode === 'player')}
               >
                 🙈 Player
               </button>
               <button
                 onClick={togglePkMode}
                 title="Enable PK Mode (Voice over thoughts in Heads-Up)"
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  background: pkMode ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
-                  color: pkMode ? 'white' : '#9ca3af',
-                  marginLeft: '10px',
-                }}
+                style={styles.pkModeBtn(pkMode)}
               >
                 ⚔️ PK
               </button>
               <button
                 onClick={toggleAudio}
                 title={audioEnabled ? 'Turn voice over off' : 'Turn voice over on'}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  background: audioEnabled ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'transparent',
-                  color: audioEnabled ? 'white' : '#9ca3af',
-                  marginLeft: '10px',
-                }}
+                style={styles.audioBtn(audioEnabled)}
               >
                 {audioEnabled ? '🔊' : '🔇'} Voice
               </button>
@@ -521,118 +343,72 @@ export default function GamePage() {
 
             {/* Human Action Controls */}
             {isHumanTurn && currentPlayer ? (
-              <div style={{
-                background: 'rgba(94, 19, 32, 0.25)',
-                backdropFilter: 'blur(24px) saturate(120%)',
-                WebkitBackdropFilter: 'blur(24px) saturate(120%)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2)',
-                borderRadius: '16px',
-                padding: '20px 24px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '14px',
-                minWidth: '340px',
-              }}>
-                <div style={{ color: '#ffb3b8', fontWeight: 700, fontSize: '14px', textAlign: 'center' }}>
+              <div style={styles.humanControlsPanel}>
+                <div style={styles.humanTurnTitle}>
                   🧑 Your Turn — {currentPlayer.name}
                 </div>
 
                 {/* Your cards summary */}
-                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                  {currentPlayer.holeCards.map((card, i) => (
-                    <div key={i} style={{
-                      background: 'white',
-                      borderRadius: '6px',
-                      padding: '4px 10px',
-                      fontWeight: 'bold',
-                      fontSize: '18px',
-                      color: card.suit === 'hearts' || card.suit === 'diamonds' ? '#dc2626' : '#111827',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                    }}>
-                      {card.rank === 'T' ? '10' : card.rank}
-                      {card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}
-                    </div>
-                  ))}
-                  <div style={{ color: '#9ca3af', fontSize: '13px', alignSelf: 'center', marginLeft: '8px' }}>
+                <div style={styles.humanCardsSummary}>
+                  {currentPlayer.holeCards.map((card, i) => {
+                    const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
+                    return (
+                      <div key={i} style={styles.humanSummaryCard(isRed)}>
+                        {card.rank === 'T' ? '10' : card.rank}
+                        {card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}
+                      </div>
+                    );
+                  })}
+                  <div style={styles.callAmountText}>
                     To call: <strong style={{ color: 'white' }}>${callAmount}</strong>
                   </div>
                 </div>
 
                 {/* Action buttons */}
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <div style={styles.humanActionsContainer}>
                   {validActions.includes('fold') && (
                     <button
                       onClick={() => processHumanAction({ type: 'fold', playerId: currentPlayer.id })}
-                      style={{
-                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
-                        fontWeight: 700, fontSize: '14px',
-                        background: 'rgba(239,68,68,0.2)', color: '#f87171',
-                        border: '1px solid rgba(239,68,68,0.3)',
-                      }}
+                      style={styles.btnFold}
                     >✕ Fold</button>
                   )}
                   {validActions.includes('check') && (
                     <button
                       onClick={() => processHumanAction({ type: 'check', playerId: currentPlayer.id })}
-                      style={{
-                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
-                        fontWeight: 700, fontSize: '14px',
-                        background: 'rgba(107,114,128,0.2)', color: '#d1d5db',
-                        border: '1px solid rgba(107,114,128,0.3)',
-                      }}
+                      style={styles.btnCheck}
                     >✓ Check</button>
                   )}
                   {validActions.includes('call') && (
                     <button
                       onClick={() => processHumanAction({ type: 'call', playerId: currentPlayer.id })}
-                      style={{
-                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
-                        fontWeight: 700, fontSize: '14px',
-                        background: 'rgba(59,130,246,0.2)', color: '#60a5fa',
-                        border: '1px solid rgba(59,130,246,0.3)',
-                      }}
+                      style={styles.btnCall}
                     >📞 Call ${callAmount}</button>
                   )}
                   {validActions.includes('all_in') && (
                     <button
                       onClick={() => processHumanAction({ type: 'all_in', playerId: currentPlayer.id })}
-                      style={{
-                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
-                        fontWeight: 700, fontSize: '14px',
-                        background: 'linear-gradient(135deg, rgba(163,29,46,0.4), rgba(122,17,27,0.4))', color: '#ffb3b8',
-                        border: '1px solid rgba(255, 100, 100, 0.4)',
-                      }}
+                      style={styles.btnAllIn}
                     >🚀 All-In</button>
                   )}
                 </div>
 
                 {/* Raise controls */}
                 {validActions.includes('raise') && (
-                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={styles.raiseControlsContainer}>
                     <input
                       type="number"
                       value={raiseAmount || minRaise}
                       min={minRaise}
                       max={maxRaise}
                       onChange={e => setRaiseAmount(Number(e.target.value))}
-                      style={{
-                        width: '100px', padding: '10px 12px', borderRadius: '8px',
-                        background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.15)',
-                        color: 'white', fontSize: '14px', textAlign: 'center',
-                      }}
+                      style={styles.raiseInput}
                     />
                     <button
                       onClick={() => {
                         const amount = raiseAmount > 0 ? raiseAmount : minRaise;
                         processHumanAction({ type: 'raise', amount, playerId: currentPlayer.id });
                       }}
-                      style={{
-                        padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
-                        fontWeight: 700, fontSize: '14px',
-                        background: 'linear-gradient(135deg, rgba(234,179,8,0.3), rgba(217,119,6,0.3))', color: '#fbbf24',
-                        border: '1px solid rgba(234,179,8,0.4)',
-                      }}
+                      style={styles.btnRaise}
                     >⬆ Raise</button>
                   </div>
                 )}
@@ -643,31 +419,14 @@ export default function GamePage() {
                 <>
                   <button
                     onClick={() => setIsPlaying(!isPlaying)}
-                    style={{
-                      padding: '12px 24px',
-                      borderRadius: '12px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontWeight: 600,
-                      background: isPlaying ? 'rgba(234,179,8,0.2)' : 'rgba(34,197,94,0.2)',
-                      color: isPlaying ? '#facc15' : '#4ade80',
-                    }}
+                    style={styles.btnPlaybackToggle(isPlaying)}
                   >
                     {isPlaying ? '⏸ Pause' : '▶ Play'}
                   </button>
                   <button
                     onClick={() => processNextTurn()}
                     disabled={isProcessingTurn}
-                    style={{
-                      padding: '12px 24px',
-                      borderRadius: '12px',
-                      border: 'none',
-                      cursor: isProcessingTurn ? 'not-allowed' : 'pointer',
-                      fontWeight: 600,
-                      background: 'rgba(59,130,246,0.2)',
-                      color: '#60a5fa',
-                      opacity: isProcessingTurn ? 0.5 : 1,
-                    }}
+                    style={styles.btnNext(isProcessingTurn)}
                   >
                     ⏭ Next
                   </button>
@@ -675,16 +434,7 @@ export default function GamePage() {
               ) : (
                 <button
                   onClick={handleNewHand}
-                  style={{
-                    padding: '16px 32px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    fontSize: '16px',
-                    background: 'linear-gradient(135deg, #a31d2e, #7a111b)',
-                    color: 'white',
-                  }}
+                  style={styles.btnDealNewHand}
                 >
                   🃏 Deal New Hand
                 </button>
@@ -694,112 +444,62 @@ export default function GamePage() {
         </div>
 
         {/* Sidebar - Chat & Thoughts */}
-        <div style={{
-          width: '350px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          overflow: 'hidden',
-        }}>
+        <div style={styles.sidebar}>
           {/* Table Talk (Enriched) */}
-          <div style={{
-            background: 'rgba(94, 19, 32, 0.2)',
-            backdropFilter: 'blur(20px) saturate(120%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(120%)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '16px',
-            padding: '20px',
-            flex: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-          }}>
-            <h3 style={{ color: 'white', margin: '0 0 15px 0', fontSize: '18px' }}>
+          <div style={styles.chatContainer}>
+            <h3 style={styles.chatTitle}>
               💬 Table Talk
             </h3>
-            <div style={{ 
-              flex: 1, 
-              overflowY: 'auto',
-              maxHeight: '500px',
-              minHeight: 0
-            }}>
+            <div style={styles.chatMessagesList}>
               {chatMessages.length === 0 ? (
-                <p style={{ color: '#6b7280', fontSize: '14px' }}>No messages yet...</p>
+                <p style={styles.chatEmptyText}>No messages yet...</p>
               ) : (
-                chatMessages.map((msg) => (
-                  <div key={msg.id} style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255,255,255,0.05)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    marginBottom: '10px',
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                      <div style={{ color: '#ffb3b8', fontWeight: 600, fontSize: '13px' }}>
-                        {msg.agentName}
+                chatMessages.map((msg) => {
+                  const hasLinkedThoughtAndTransparent = !!(msg.linkedThought && viewMode === 'transparent');
+                  return (
+                    <div key={msg.id} style={styles.chatMsgContainer}>
+                      <div style={styles.chatMsgHeader}>
+                        <div style={styles.chatMsgAuthor}>
+                          {msg.agentName}
+                        </div>
+                        
+                        {/* Thought Toggle Trigger */}
+                        {hasLinkedThoughtAndTransparent && (
+                          <div style={styles.chatMsgThoughtIcon} title="Has internal thought">
+                             🧠
+                          </div>
+                        )}
                       </div>
                       
-                      {/* Thought Toggle Trigger */}
-                      {msg.linkedThought && viewMode === 'transparent' && (
-                        <div style={{ fontSize: '12px', cursor: 'help' }} title="Has internal thought">
-                           🧠
+                      <div style={styles.chatMsgText(hasLinkedThoughtAndTransparent)}>
+                        "{msg.message}"
+                      </div>
+
+                      {msg.actionDisplay && (
+                        <div style={styles.chatMsgAction}>
+                          <span>⚡</span>
+                          {msg.actionDisplay}
                         </div>
                       )}
-                    </div>
-                    
-                    <div style={{ color: '#d1d5db', fontSize: '14px', fontStyle: 'italic', marginBottom: msg.linkedThought && viewMode === 'transparent' ? '8px' : '0' }}>
-                      "{msg.message}"
-                    </div>
 
-                    {msg.actionDisplay && (
-                      <div style={{ 
-                        marginTop: '6px',
-                        fontSize: '11px', 
-                        color: '#34d399', 
-                        fontWeight: 700,
-                        letterSpacing: '0.5px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}>
-                        <span>⚡</span>
-                        {msg.actionDisplay}
-                      </div>
-                    )}
-
-                    {/* Integrated Thought Reveal */}
-                    {msg.linkedThought && viewMode === 'transparent' && (
-                      <details style={{ marginTop: '8px' }}>
-                        <summary style={{
-                          cursor: 'pointer',
-                          color: '#6b7280',
-                          fontSize: '11px',
-                          userSelect: 'none',
-                          outline: 'none',
-                        }}>
-                          Reveal Internal Thought
-                        </summary>
-                        <div style={{
-                          marginTop: '8px',
-                          padding: '10px',
-                          background: 'rgba(239,68,68,0.1)',
-                          borderLeft: '2px solid #ef4444',
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          color: '#fca5a5',
-                          whiteSpace: 'pre-wrap',
-                          lineHeight: '1.4',
-                        }}>
-                          <div style={{ fontWeight: 'bold', marginBottom: '4px', opacity: 0.8 }}>Thinking Process:</div>
-                          {msg.linkedThought.reasoning}
-                          {msg.linkedThought.confidence && (
-                             <div style={{ marginTop: '6px', fontSize: '10px', opacity: 0.7 }}>Confidence: {msg.linkedThought.confidence}%</div>
-                          )}
-                        </div>
-                      </details>
-                    )}
-                  </div>
-                ))
+                      {/* Integrated Thought Reveal */}
+                      {hasLinkedThoughtAndTransparent && (
+                        <details style={styles.thoughtRevealDetails}>
+                          <summary style={styles.thoughtRevealSummary}>
+                            Reveal Internal Thought
+                          </summary>
+                          <div style={styles.thoughtRevealContent}>
+                            <div style={styles.thoughtRevealHeader}>Thinking Process:</div>
+                            {msg.linkedThought?.reasoning}
+                            {msg.linkedThought?.confidence && (
+                               <div style={styles.thoughtConfidenceText}>Confidence: {msg.linkedThought.confidence}%</div>
+                            )}
+                          </div>
+                        </details>
+                      )}
+                    </div>
+                  );
+                })
               )}
             </div>
           </div>
@@ -807,26 +507,8 @@ export default function GamePage() {
 
       {/* Processing indicator */}
       {isProcessingTurn && (
-        <div style={{
-          position: 'fixed',
-          bottom: '20px',
-          left: '20px',
-          background: 'rgba(30,30,50,0.9)',
-          borderRadius: '12px',
-          padding: '12px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          color: '#d1d5db',
-        }}>
-          <div style={{
-            width: '16px',
-            height: '16px',
-            border: '2px solid #8b5cf6',
-            borderTopColor: 'transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-          }} />
+        <div style={styles.processingIndicator}>
+          <div style={styles.spinner} />
           AI is thinking...
         </div>
       )}

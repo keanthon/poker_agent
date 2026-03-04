@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import { Card as CardType, isRedSuit, RANK_NAMES, SUIT_SYMBOLS } from '@/lib/poker';
 
+import { cardStyles } from '@/styles/tableStyles';
+
 interface CardProps {
   card?: CardType;
   faceDown?: boolean;
@@ -39,9 +41,7 @@ export function PlayingCard({ card, faceDown = false, size = 'medium', delay = 0
           : 'bg-white border border-gray-300'
         }
       `}
-      style={{
-        perspective: '1000px',
-      }}
+      style={cardStyles.perspective}
     >
       {faceDown ? (
         <div className="w-full h-full rounded-md bg-gradient-to-br from-blue-700 to-purple-800 m-1 flex items-center justify-center">

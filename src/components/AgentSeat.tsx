@@ -8,6 +8,7 @@ import { AgentThought } from '@/lib/agents';
 import { PlayingCard } from './Card';
 import { useSettingsStore } from '@/store';
 import { isValidImageSrc } from '@/lib/utils/image';
+import { agentSeatStyles } from '@/styles/tableStyles';
 
 interface AgentSeatProps {
   player: PlayerState;
@@ -44,7 +45,7 @@ export function AgentSeat({
   return (
     <motion.div
       className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-      style={{ left: `${left}%`, top: `${top}%` }}
+      style={agentSeatStyles.container(left, top)}
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -85,11 +86,7 @@ export function AgentSeat({
                   backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
                 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                style={{
-                  backgroundSize: '200% 100%',
-                  filter: 'blur(8px)',
-                  opacity: 0.6,
-                }}
+                style={agentSeatStyles.thinkingRing}
               />
             </motion.div>
           )}
