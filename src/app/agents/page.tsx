@@ -175,7 +175,7 @@ export default function AgentsPage() {
               <br /><br />
               To play properly, click <strong>Edit</strong> on a preconfigured agent and enter your API key, or click <strong>+ Add Agent</strong> to register your own.
               <br /><br />
-              <em>Privacy Promise: API Keys are stored only in your browser's local storage and are <strong>never</strong> sent to our servers.</em>
+              <em>🔒 Privacy: API keys are stored only in your browser&apos;s localStorage and are <strong>never logged, stored, or retained server-side</strong>. During gameplay, keys pass through a stateless serverless proxy solely to bypass browser CORS restrictions — the proxy retains zero state between requests. <a href="https://github.com/keanthon/poker_agent/blob/main/src/app/api/chat/route.ts" target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa' }}>View proxy source code</a></em>
             </p>
           </div>
         </div>

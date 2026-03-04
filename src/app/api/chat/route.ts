@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
         const errorText = await response.text();
-        console.error(`Error from ${apiUrl}:`, response.status, errorText);
         return new Response(errorText, {
             status: response.status,
             headers: { 'Content-Type': 'application/json' },
@@ -38,7 +37,7 @@ export async function POST(req: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
-    console.error('Proxy Error:', error);
+
     return new Response(
       JSON.stringify({ error: 'Internal Server Error', details: error.message }),
       {

@@ -138,10 +138,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Security and Privacy 🛡️
 
-This application uses a strict Bring Your Own Key (BYOK) model:
+This application uses a strict **Bring Your Own Key (BYOK)** model. Your API keys are never stored, logged, or retained on any server.
 
-1. API keys are entered directly in the browser and stored only in localStorage
-2. LLM requests are proxied through a stateless Next.js Edge Route solely to bypass browser CORS restrictions
-3. API keys are never logged, persisted server-side, or transmitted to any third party
-
-The proxy acts exclusively as a pass-through and retains zero state between requests.
+| Concern | How it's handled |
+|:---|:---|
+| **Key storage** | API keys are stored exclusively in your browser's `localStorage`. They never leave your device except during active gameplay requests. |
+| **Server-side logging** | The proxy server contains zero logging of API keys. No `console.log`, no database writes, no analytics. |
+| **Server-side storage** | The proxy is a stateless Netlify serverless function. It spins up, forwards your request, and is destroyed. There is no persistent process or memory that retains your key. |
+| **Third-party transmission** | Your API key is sent only to the LLM provider URL **you** specify (e.g., `api.openai.com`, `api.x.ai`). It is never sent anywhere else. |
+| **Why a proxy?** | Browser CORS policies block direct requests to LLM APIs from `fetch()`. The serverless proxy exists solely to bypass this restriction. |
+| **Transparency** | The entire proxy is [7 lines of forwarding logic](https://github.com/keanthon/poker_agent/blob/main/src/app/api/chat/route.ts) — fully open-source and auditable. |

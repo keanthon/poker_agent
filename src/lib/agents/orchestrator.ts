@@ -217,7 +217,6 @@ What's your move? Think through your decision first, then use the appropriate to
     }
 
     const data = await response.json();
-    console.log(`[Single-call] Raw Response for ${agent.model}:`, JSON.stringify(data, null, 2));
     const result = parseAgentResponse(agent.id, data);
 
     // If we got an action, return the full result
