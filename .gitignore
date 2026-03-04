@@ -46,3 +46,4 @@ next-env.d.ts
 # API keys - DO NOT COMMIT
 api_keys.txt
 .npm-cache
+out/
