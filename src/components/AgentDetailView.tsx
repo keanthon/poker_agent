@@ -46,7 +46,7 @@ export function AgentDetailView({ player, thoughts, chats, onClose }: AgentDetai
       {/* Header */}
       <div className="p-4 border-b border-gray-700 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-purple-500">
+          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-red-500">
             {isValidImageSrc(player.profileImage) ? (
               <Image
                 src={player.profileImage}
@@ -55,8 +55,8 @@ export function AgentDetailView({ player, thoughts, chats, onClose }: AgentDetai
                 className="object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                <span className="text-xl text-white font-bold">
+              <div className="w-full h-full bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center">
+                <span className="text-xl text-white font-bold drop-shadow-md">
                   {player.name.charAt(0).toUpperCase()}
                 </span>
               </div>

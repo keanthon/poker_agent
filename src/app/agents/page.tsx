@@ -150,19 +150,28 @@ export default function AgentsPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0a0a12 100%)',
+      background: 'radial-gradient(circle at 50% 0%, #3a0a14 0%, #1a0508 60%, #0a0002 100%)',
       padding: '40px',
     }}>
-      {/* Background */}
+      {/* Background Glow */}
       <div style={{
         position: 'fixed',
         top: '10%',
         left: '20%',
-        width: '400px',
-        height: '400px',
-        background: 'rgba(139, 92, 246, 0.1)',
+        width: '500px',
+        height: '500px',
+        background: 'radial-gradient(circle, rgba(128, 0, 0, 0.12) 0%, transparent 70%)',
         borderRadius: '50%',
-        filter: 'blur(100px)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'fixed',
+        bottom: '10%',
+        right: '10%',
+        width: '600px',
+        height: '600px',
+        background: 'radial-gradient(circle, rgba(94, 19, 32, 0.1) 0%, transparent 70%)',
+        borderRadius: '50%',
         pointerEvents: 'none',
       }} />
 
@@ -180,26 +189,31 @@ export default function AgentsPage() {
         </Link>
 
         <h1 style={{
-          fontSize: '3rem',
-          fontWeight: 900,
-          background: 'linear-gradient(135deg, #a78bfa, #60a5fa)',
+          fontSize: '3.5rem',
+          fontWeight: 800,
+          background: 'linear-gradient(180deg, #ffffff 0%, #ffb3b8 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
           margin: '0 0 20px 0',
+          letterSpacing: '-1px',
+          textShadow: '0 4px 20px rgba(128, 0, 0, 0.4)',
         }}>
           Agent Management
         </h1>
 
         {/* Disclaimer Info Box */}
         <div style={{
-          background: 'rgba(239, 68, 68, 0.1)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          borderRadius: '12px',
-          padding: '16px 20px',
-          marginBottom: '30px',
+          background: 'rgba(94, 19, 32, 0.2)',
+          backdropFilter: 'blur(24px) saturate(120%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(120%)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          boxShadow: '0 8px 32px 0 rgba(74, 14, 20, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '20px 24px',
+          marginBottom: '35px',
           display: 'flex',
-          gap: '12px',
+          gap: '16px',
           alignItems: 'flex-start'
         }}>
           <span style={{ fontSize: '20px' }}>⚠️</span>
@@ -220,11 +234,14 @@ export default function AgentsPage() {
         {/* Quick Start Section */}
         {registeredAgents.length >= 2 && (
           <div style={{
-            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2))',
-            border: '1px solid rgba(34, 197, 94, 0.3)',
-            borderRadius: '16px',
-            padding: '24px',
-            marginBottom: '30px',
+            background: 'linear-gradient(145deg, rgba(94, 19, 32, 0.3), rgba(30, 5, 10, 0.6))',
+            backdropFilter: 'blur(24px) saturate(120%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(120%)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2)',
+            borderRadius: '20px',
+            padding: '24px 30px',
+            marginBottom: '35px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -232,8 +249,8 @@ export default function AgentsPage() {
             gap: '16px',
           }}>
             <div>
-              <h3 style={{ color: 'white', margin: '0 0 4px 0', fontSize: '18px' }}>Ready to Play!</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', margin: 0, fontSize: '14px' }}>
+              <h3 style={{ color: '#fca5a5', margin: '0 0 6px 0', fontSize: '20px', fontWeight: 600 }}>Ready to Play!</h3>
+              <p style={{ color: '#9ca3af', margin: 0, fontSize: '15px' }}>
                 {registeredAgents.length} agents loaded and ready
               </p>
             </div>
@@ -243,15 +260,17 @@ export default function AgentsPage() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                background: 'linear-gradient(135deg, #22c55e, #10b981)',
+                background: 'linear-gradient(135deg, #a31d2e 0%, #7a111b 100%)',
                 color: 'white',
                 fontWeight: 700,
                 fontSize: '16px',
                 padding: '16px 32px',
-                borderRadius: '12px',
-                border: 'none',
+                borderRadius: '14px',
+                border: '1px solid rgba(255,255,255,0.15)',
                 cursor: 'pointer',
-                boxShadow: '0 8px 30px rgba(34, 197, 94, 0.3)',
+                boxShadow: '0 8px 25px rgba(128, 0, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.3)',
+                transition: 'all 0.2s',
+                textShadow: '0 1px 2px rgba(0,0,0,0.5)',
               }}
             >
               <span style={{ fontSize: '20px' }}>▶</span>
@@ -280,14 +299,18 @@ export default function AgentsPage() {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+              background: 'linear-gradient(180deg, rgba(94,19,32,0.4) 0%, rgba(30,5,10,0.6) 100%)',
               color: 'white',
               fontWeight: 600,
-              fontSize: '16px',
+              fontSize: '15px',
               padding: '14px 28px',
-              borderRadius: '12px',
-              border: 'none',
+              borderRadius: '14px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1)',
               cursor: 'pointer',
+              transition: 'all 0.2s',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
             }}
           >
             <span style={{ fontSize: '20px' }}>+</span>
@@ -302,15 +325,19 @@ export default function AgentsPage() {
               alignItems: 'center',
               gap: '10px',
               background: humanAgent
-                ? 'linear-gradient(135deg, rgba(239,68,68,0.2), rgba(220,38,38,0.2))'
-                : 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(16,185,129,0.15))',
-              color: humanAgent ? '#f87171' : '#4ade80',
+                ? 'linear-gradient(180deg, rgba(163,29,46,0.3), rgba(122,17,27,0.3))'
+                : 'linear-gradient(180deg, rgba(94,19,32,0.4), rgba(30,5,10,0.6))',
+              color: humanAgent ? '#ffb3b8' : '#d1d5db',
               fontWeight: 600,
-              fontSize: '16px',
+              fontSize: '15px',
               padding: '14px 28px',
-              borderRadius: '12px',
-              border: humanAgent ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(34,197,94,0.3)',
+              borderRadius: '14px',
+              border: '1px solid rgba(255,255,255,0.15)',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.05)',
               cursor: 'pointer',
+              transition: 'all 0.2s',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
             }}
           >
             <span style={{ fontSize: '20px' }}>{humanAgent ? '✕' : '🧑'}</span>
@@ -324,14 +351,18 @@ export default function AgentsPage() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
+                background: 'rgba(94, 19, 32, 0.2)',
+                backdropFilter: 'blur(10px) saturate(120%)',
+                WebkitBackdropFilter: 'blur(10px) saturate(120%)',
+                color: '#d1d5db',
                 fontWeight: 600,
-                fontSize: '16px',
+                fontSize: '15px',
                 padding: '14px 28px',
-                borderRadius: '12px',
-                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '14px',
+                border: '1px solid rgba(255,255,255,0.15)',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
                 cursor: 'pointer',
+                transition: 'all 0.2s',
               }}
             >
               Select All
@@ -342,11 +373,14 @@ export default function AgentsPage() {
         {/* Registration Form */}
         {showForm && (
           <div style={{
-            background: 'rgba(30, 30, 50, 0.8)',
-            borderRadius: '16px',
-            padding: '30px',
-            marginBottom: '30px',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'rgba(50, 10, 15, 0.4)',
+            backdropFilter: 'blur(30px) saturate(150%)',
+            WebkitBackdropFilter: 'blur(30px) saturate(150%)',
+            borderRadius: '24px',
+            padding: '35px',
+            marginBottom: '40px',
+            border: '1px solid rgba(255,255,255,0.2)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.15)',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ color: 'white', margin: 0, fontSize: '1.25rem' }}>{editingId ? 'Edit Agent' : 'Register New Agent'}</h3>
@@ -373,14 +407,23 @@ export default function AgentsPage() {
                   placeholder="e.g., GPT-4 Poker Pro"
                   style={{
                     width: '100%',
-                    padding: '14px 18px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: '10px',
+                    padding: '16px 20px',
+                    background: 'rgba(0,0,0,0.4)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
                     color: 'white',
                     fontSize: '16px',
                     outline: 'none',
                     boxSizing: 'border-box',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#ef4444';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                    e.target.style.boxShadow = 'none';
                   }}
                   required
                 />
@@ -421,15 +464,24 @@ export default function AgentsPage() {
                   placeholder="sk-..."
                   style={{
                     width: '100%',
-                    padding: '14px 18px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: '10px',
+                    padding: '16px 20px',
+                    background: 'rgba(0,0,0,0.4)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
                     color: 'white',
-                    fontSize: '14px',
+                    fontSize: '15px',
                     fontFamily: 'monospace',
                     outline: 'none',
                     boxSizing: 'border-box',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#ef4444';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                    e.target.style.boxShadow = 'none';
                   }}
                 />
               </div>
@@ -485,15 +537,22 @@ export default function AgentsPage() {
                 type="submit"
                 style={{
                   width: '100%',
-                  padding: '16px',
-                  background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+                  padding: '18px',
+                  background: 'linear-gradient(135deg, #a31d2e 0%, #7a111b 100%)',
                   color: 'white',
                   fontWeight: 700,
                   fontSize: '16px',
-                  borderRadius: '12px',
-                  border: 'none',
+                  borderRadius: '14px',
+                  border: '1px solid rgba(255,255,255,0.2)',
                   cursor: 'pointer',
+                  boxShadow: '0 8px 25px rgba(128, 0, 0, 0.5), inset 0 1px 2px rgba(255,255,255,0.3)',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                  marginTop: '10px',
+                  transition: 'transform 0.1s',
                 }}
+                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
+                onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
               >
                 {editingId ? 'Save Changes' : 'Register Agent'}
               </button>
@@ -535,30 +594,37 @@ export default function AgentsPage() {
                 style={{
                   padding: '24px',
                   background: selectedIds.has(agent.id) 
-                    ? 'rgba(139, 92, 246, 0.2)' 
-                    : 'rgba(30, 30, 50, 0.6)',
-                  borderRadius: '16px',
+                    ? 'linear-gradient(145deg, rgba(128, 0, 0, 0.3), rgba(94, 19, 32, 0.2))' 
+                    : 'rgba(50, 10, 15, 0.25)',
+                  backdropFilter: 'blur(20px) saturate(120%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(120%)',
+                  borderRadius: '20px',
                   border: selectedIds.has(agent.id)
-                    ? '2px solid #8b5cf6'
-                    : '1px solid rgba(255,255,255,0.1)',
+                    ? '1px solid rgba(255, 120, 120, 0.4)'
+                    : '1px solid rgba(255, 255, 255, 0.15)',
+                  boxShadow: selectedIds.has(agent.id)
+                    ? '0 10px 30px rgba(74, 14, 20, 0.6), inset 0 1px 2px rgba(255,255,255,0.2)'
+                    : '0 4px 20px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.05)',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
+                  transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                  transform: selectedIds.has(agent.id) ? 'translateY(-4px)' : 'none',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                   <div style={{
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '14px',
+                    background: 'linear-gradient(135deg, #a31d2e, #5e1320)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     overflow: 'hidden',
                     flexShrink: 0,
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.3)',
                   }}>
                     {isValidImageSrc(agent.profileImage) ? (
-                      <Image src={agent.profileImage} alt={agent.name} width={50} height={50} style={{ objectFit: 'cover' }} />
+                      <Image src={agent.profileImage} alt={agent.name} width={56} height={56} style={{ objectFit: 'cover' }} />
                     ) : (
                       <span style={{ color: 'white', fontSize: '20px', fontWeight: 700 }}>
                         {agent.name.charAt(0).toUpperCase()}
@@ -583,15 +649,17 @@ export default function AgentsPage() {
                   </div>
                   {selectedIds.has(agent.id) && (
                     <div style={{
-                      width: '24px',
-                      height: '24px',
+                      width: '28px',
+                      height: '28px',
                       borderRadius: '50%',
-                      background: '#8b5cf6',
+                      background: 'linear-gradient(180deg, #a31d2e, #7a111b)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: 'white',
                       fontSize: '14px',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 10px rgba(128, 0, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.4)',
                     }}>
                       ✓
                     </div>
@@ -613,7 +681,7 @@ export default function AgentsPage() {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#60a5fa',
+                      color: '#fca5a5',
                       fontSize: '14px',
                       cursor: 'pointer',
                       padding: 0,

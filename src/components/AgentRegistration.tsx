@@ -77,7 +77,7 @@ export function AgentRegistrationForm({ onComplete, editAgent }: AgentRegistrati
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g., GPT-4 Poker Pro"
-          className="w-full bg-gray-800/80 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+          className="w-full bg-black/60 border border-red-900/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all"
         />
       </div>
 
@@ -88,7 +88,7 @@ export function AgentRegistrationForm({ onComplete, editAgent }: AgentRegistrati
           value={apiUrl}
           onChange={(e) => setApiUrl(e.target.value)}
           placeholder="https://api.openai.com/v1/chat/completions"
-          className="w-full bg-gray-800/80 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all font-mono text-sm"
+          className="w-full bg-black/60 border border-red-900/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all font-mono text-sm"
         />
         <p className="text-gray-500 text-xs mt-2">
           Must be OpenAI-compatible chat completions endpoint
@@ -102,7 +102,7 @@ export function AgentRegistrationForm({ onComplete, editAgent }: AgentRegistrati
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
           placeholder="sk-..."
-          className="w-full bg-gray-800/80 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all font-mono text-sm"
+          className="w-full bg-black/60 border border-red-900/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all font-mono text-sm"
         />
       </div>
 
@@ -114,10 +114,10 @@ export function AgentRegistrationForm({ onComplete, editAgent }: AgentRegistrati
             value={profileImage}
             onChange={(e) => setProfileImage(e.target.value)}
             placeholder="https://example.com/avatar.png"
-            className="flex-1 bg-gray-800/80 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all text-sm"
+            className="flex-1 bg-black/60 border border-red-900/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all text-sm"
           />
           {isValidImageSrc(profileImage) && (
-            <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-purple-500/50 flex-shrink-0">
+            <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-red-500/50 flex-shrink-0">
               <Image
                 src={profileImage}
                 alt="Preview"
@@ -137,13 +137,13 @@ export function AgentRegistrationForm({ onComplete, editAgent }: AgentRegistrati
           onChange={(e) => setPersonality(e.target.value)}
           placeholder="Describe this agent's playstyle and personality..."
           rows={3}
-          className="w-full bg-gray-800/80 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all resize-none"
+          className="w-full bg-black/60 border border-red-900/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all resize-none"
         />
       </div>
 
       <button
         type="submit"
-        className="w-full bg-gradient-to-r from-purple-600 via-violet-600 to-blue-600 hover:from-purple-500 hover:via-violet-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-900/30"
+        className="w-full bg-gradient-to-r from-red-700 via-red-600 to-red-800 hover:from-red-600 hover:via-red-500 hover:to-red-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-900/40"
       >
         {editAgent ? 'Update Agent' : 'Register Agent'}
       </button>
@@ -186,7 +186,7 @@ export function AgentList({ onSelectForGame }: { onSelectForGame?: (agents: Stor
             setEditingAgent(null);
             setShowForm(true);
           }}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg shadow-purple-900/30"
+          className="flex items-center gap-2 bg-gradient-to-r from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg shadow-red-900/40"
         >
           <Plus className="w-5 h-5" />
           Add Agent
@@ -198,13 +198,13 @@ export function AgentList({ onSelectForGame }: { onSelectForGame?: (agents: Stor
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-20 bg-gray-800/30 rounded-2xl border border-gray-700/50 backdrop-blur-sm"
+          className="text-center py-20 bg-black/40 rounded-2xl border border-red-900/20 backdrop-blur-sm"
         >
           <div className="text-6xl mb-4">🤖</div>
           <div className="text-gray-400 text-lg mb-4">No agents registered yet</div>
           <button
             onClick={() => setShowForm(true)}
-            className="text-purple-400 hover:text-purple-300 transition-colors font-medium"
+            className="text-red-400 hover:text-red-300 transition-colors font-medium"
           >
             Register your first AI agent →
           </button>
@@ -223,21 +223,21 @@ export function AgentList({ onSelectForGame }: { onSelectForGame?: (agents: Stor
                 className={`
                   relative p-6 rounded-2xl border-2 transition-all cursor-pointer backdrop-blur-sm
                   ${selectedIds.has(agent.id)
-                    ? 'border-purple-500 bg-purple-900/30 shadow-lg shadow-purple-900/20'
-                    : 'border-gray-700/50 bg-gray-800/40 hover:border-gray-600 hover:bg-gray-800/60'
+                    ? 'border-red-500 bg-red-900/20 shadow-lg shadow-red-900/20'
+                    : 'border-red-900/30 bg-black/40 hover:border-red-700/50 hover:bg-black/60'
                   }
                 `}
                 onClick={() => toggleSelect(agent.id)}
               >
                 {/* Selected indicator */}
                 {selectedIds.has(agent.id) && (
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
                     <span className="text-white text-xs">✓</span>
                   </div>
                 )}
 
                 <div className="flex items-start gap-4">
-                  <div className="relative w-14 h-14 rounded-xl overflow-hidden border-2 border-gray-600/50 flex-shrink-0">
+                  <div className="relative w-14 h-14 rounded-xl overflow-hidden border-2 border-red-900/50 flex-shrink-0 shadow-inner shadow-black/50">
                     {isValidImageSrc(agent.profileImage) && agent.profileImage !== '/default-avatar.png' ? (
                       <Image
                         src={agent.profileImage}
@@ -246,8 +246,8 @@ export function AgentList({ onSelectForGame }: { onSelectForGame?: (agents: Stor
                         className="object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                        <span className="text-2xl text-white font-bold">
+                      <div className="w-full h-full bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center">
+                        <span className="text-2xl text-white font-bold drop-shadow-md">
                           {agent.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
@@ -264,7 +264,7 @@ export function AgentList({ onSelectForGame }: { onSelectForGame?: (agents: Stor
                   </div>
                 </div>
                 
-                <div className="flex justify-end gap-3 mt-5 pt-4 border-t border-gray-700/50">
+                <div className="flex justify-end gap-3 mt-5 pt-4 border-t border-red-900/30">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -304,7 +304,7 @@ export function AgentList({ onSelectForGame }: { onSelectForGame?: (agents: Stor
           >
             <button
               onClick={handleStartGame}
-              className="flex items-center gap-3 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white font-bold text-lg px-10 py-5 rounded-2xl shadow-2xl shadow-green-900/40 transition-all hover:scale-105"
+              className="flex items-center gap-3 bg-gradient-to-r from-red-700 via-red-600 to-red-800 hover:from-red-600 hover:via-red-500 hover:to-red-700 text-white font-bold text-lg px-10 py-5 rounded-2xl shadow-2xl shadow-red-900/40 transition-all hover:scale-105"
             >
               <span>Start Game with {selectedIds.size} Agents</span>
               <span className="text-2xl">🎮</span>

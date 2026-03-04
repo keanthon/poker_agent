@@ -29,24 +29,27 @@ export function PokerTable({ gameState, thoughts, onAgentClick }: PokerTableProp
       <div className="absolute inset-4 rounded-[50%] bg-black/40 blur-xl" />
       
       {/* Table outer rim */}
-      <div className="absolute inset-0 rounded-[50%] bg-gradient-to-b from-amber-900 via-amber-800 to-amber-950 shadow-2xl p-3">
+      <div className="absolute inset-0 rounded-[50%] bg-gradient-to-b from-red-950 via-red-900 to-black shadow-2xl p-3 border border-red-900/50">
         {/* Table felt */}
-        <div className="w-full h-full rounded-[50%] bg-gradient-to-br from-emerald-700 via-green-800 to-emerald-900 relative overflow-hidden">
+        <div className="w-full h-full rounded-[50%] bg-gradient-to-br from-red-900 via-red-950 to-black relative overflow-hidden">
           {/* Felt texture pattern */}
-          <div className="absolute inset-0 opacity-30">
+          <div className="absolute inset-0 opacity-40">
             <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,0,0,0.15) 1px, transparent 0)',
+              backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,0,0,0.3) 1px, transparent 0)',
               backgroundSize: '16px 16px',
             }} />
           </div>
           
           {/* Inner felt border */}
-          <div className="absolute inset-6 rounded-[50%] border-2 border-green-600/40" />
-          <div className="absolute inset-10 rounded-[50%] border border-green-500/20" />
+          <div className="absolute inset-6 rounded-[50%] border-2 border-red-600/30" />
+          <div className="absolute inset-10 rounded-[50%] border border-red-500/10" />
           
           {/* Table logo/branding */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="text-5xl font-black text-white/5 tracking-widest">AI POKER</span>
+            <div className="text-center">
+              <span className="text-6xl font-black text-white/5 tracking-widest drop-shadow-2xl">AI POKER</span>
+              <div className="text-white/5 text-2xl mt-2 tracking-[0.5em] font-serif">♠️ ♥️ ♦️ ♣️</div>
+            </div>
           </div>
         </div>
       </div>
@@ -97,7 +100,7 @@ export function PokerTable({ gameState, thoughts, onAgentClick }: PokerTableProp
           {[...Array(5 - gameState.communityCards.length)].map((_, i) => (
             <div
               key={`empty-${i}`}
-              className="w-14 h-20 rounded-lg border-2 border-dashed border-green-600/20 bg-green-900/20"
+              className="w-14 h-20 rounded-lg border-2 border-dashed border-red-600/30 bg-red-900/20"
             />
           ))}
         </div>

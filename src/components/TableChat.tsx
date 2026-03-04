@@ -56,9 +56,9 @@ export function TableChatPanel({ messages, maxMessages = 10 }: TableChatProps) {
   const displayMessages = messages.slice(-maxMessages);
 
   return (
-    <div className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-gray-700/50 h-72 flex flex-col overflow-hidden">
+    <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-red-900/30 h-72 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-gray-700/50">
+      <div className="px-5 py-4 border-b border-red-900/30 bg-gradient-to-r from-red-950/50 to-transparent">
         <h3 className="text-white font-bold flex items-center gap-2">
           <span className="text-lg">💬</span>
           <span>Table Talk</span>

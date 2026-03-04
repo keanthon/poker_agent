@@ -35,7 +35,7 @@ function PlayerAvatar({ player, isCurrentTurn }: { player: PlayerState; isCurren
         <div style={{
           width: '100%',
           height: '100%',
-          background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+          background: 'linear-gradient(135deg, #dc2626, #7f1d1d)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -201,7 +201,7 @@ export default function GamePage() {
   return (
     <div style={{
       height: '100vh',
-      background: 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0a0a12 100%)',
+      background: 'linear-gradient(135deg, #2d0a13 0%, #1a0508 50%, #0a0002 100%)',
       padding: '20px',
       display: 'flex',
       flexDirection: 'column',
@@ -220,7 +220,7 @@ export default function GamePage() {
         <h1 style={{
           fontSize: '24px',
           fontWeight: 900,
-          background: 'linear-gradient(135deg, #a78bfa, #60a5fa)',
+          background: 'linear-gradient(135deg, #ffb3b8, #da2b3f)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           margin: 0,
@@ -465,7 +465,7 @@ export default function GamePage() {
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: 600,
-                  background: viewMode === 'transparent' ? 'linear-gradient(135deg, #8b5cf6, #6366f1)' : 'transparent',
+                  background: viewMode === 'transparent' ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
                   color: 'white',
                 }}
               >
@@ -479,7 +479,7 @@ export default function GamePage() {
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: 600,
-                  background: viewMode === 'player' ? 'linear-gradient(135deg, #8b5cf6, #6366f1)' : 'transparent',
+                  background: viewMode === 'player' ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
                   color: 'white',
                 }}
               >
@@ -494,7 +494,7 @@ export default function GamePage() {
                   border: '1px solid rgba(255,255,255,0.1)',
                   cursor: 'pointer',
                   fontWeight: 600,
-                  background: pkMode ? 'linear-gradient(135deg, #ef4444, #b91c1c)' : 'transparent',
+                  background: pkMode ? 'linear-gradient(135deg, #a31d2e, #7a111b)' : 'transparent',
                   color: pkMode ? 'white' : '#9ca3af',
                   marginLeft: '10px',
                 }}
@@ -522,8 +522,11 @@ export default function GamePage() {
             {/* Human Action Controls */}
             {isHumanTurn && currentPlayer ? (
               <div style={{
-                background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(99,102,241,0.15))',
-                border: '1px solid rgba(139,92,246,0.4)',
+                background: 'rgba(94, 19, 32, 0.25)',
+                backdropFilter: 'blur(24px) saturate(120%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(120%)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2)',
                 borderRadius: '16px',
                 padding: '20px 24px',
                 display: 'flex',
@@ -531,7 +534,7 @@ export default function GamePage() {
                 gap: '14px',
                 minWidth: '340px',
               }}>
-                <div style={{ color: '#c4b5fd', fontWeight: 700, fontSize: '14px', textAlign: 'center' }}>
+                <div style={{ color: '#ffb3b8', fontWeight: 700, fontSize: '14px', textAlign: 'center' }}>
                   🧑 Your Turn — {currentPlayer.name}
                 </div>
 
@@ -597,8 +600,8 @@ export default function GamePage() {
                       style={{
                         padding: '12px 20px', borderRadius: '10px', cursor: 'pointer',
                         fontWeight: 700, fontSize: '14px',
-                        background: 'linear-gradient(135deg, rgba(168,85,247,0.3), rgba(236,72,153,0.3))', color: '#e879f9',
-                        border: '1px solid rgba(168,85,247,0.4)',
+                        background: 'linear-gradient(135deg, rgba(163,29,46,0.4), rgba(122,17,27,0.4))', color: '#ffb3b8',
+                        border: '1px solid rgba(255, 100, 100, 0.4)',
                       }}
                     >🚀 All-In</button>
                   )}
@@ -679,7 +682,7 @@ export default function GamePage() {
                     cursor: 'pointer',
                     fontWeight: 700,
                     fontSize: '16px',
-                    background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                    background: 'linear-gradient(135deg, #a31d2e, #7a111b)',
                     color: 'white',
                   }}
                 >
@@ -698,10 +701,12 @@ export default function GamePage() {
           gap: '20px',
           overflow: 'hidden',
         }}>
-          {/* Table Talk */}
           {/* Table Talk (Enriched) */}
           <div style={{
-            background: 'rgba(255,255,255,0.05)',
+            background: 'rgba(94, 19, 32, 0.2)',
+            backdropFilter: 'blur(20px) saturate(120%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(120%)',
+            border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: '16px',
             padding: '20px',
             flex: 1,
@@ -723,13 +728,14 @@ export default function GamePage() {
               ) : (
                 chatMessages.map((msg) => (
                   <div key={msg.id} style={{
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255,255,255,0.05)',
                     borderRadius: '8px',
                     padding: '12px',
                     marginBottom: '10px',
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                      <div style={{ color: '#a78bfa', fontWeight: 600, fontSize: '13px' }}>
+                      <div style={{ color: '#ffb3b8', fontWeight: 600, fontSize: '13px' }}>
                         {msg.agentName}
                       </div>
                       
@@ -776,11 +782,11 @@ export default function GamePage() {
                         <div style={{
                           marginTop: '8px',
                           padding: '10px',
-                          background: 'rgba(139,92,246,0.1)',
-                          borderLeft: '2px solid #8b5cf6',
+                          background: 'rgba(239,68,68,0.1)',
+                          borderLeft: '2px solid #ef4444',
                           borderRadius: '4px',
                           fontSize: '12px',
-                          color: '#c4b5fd',
+                          color: '#fca5a5',
                           whiteSpace: 'pre-wrap',
                           lineHeight: '1.4',
                         }}>

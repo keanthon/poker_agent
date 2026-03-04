@@ -55,7 +55,7 @@ export function AgentSeat({
         backdrop-blur-md transition-all duration-300
         ${isCurrentTurn 
           ? 'bg-gradient-to-b from-yellow-500/30 to-amber-600/20 ring-2 ring-yellow-400/80 shadow-lg shadow-yellow-900/30' 
-          : 'bg-black/40 hover:bg-black/50'
+          : 'bg-black/60 hover:bg-black/80 border border-red-900/30'
         }
         ${player.hasFolded ? 'opacity-40 grayscale' : ''}
       `}>
@@ -99,8 +99,8 @@ export function AgentSeat({
         <div className="relative z-10">
           <div className={`
             relative w-16 h-16 rounded-xl overflow-hidden
-            border-2 transition-colors duration-300
-            ${isCurrentTurn ? 'border-yellow-400' : 'border-white/20'}
+            border-2 transition-colors duration-300 shadow-inner shadow-black/50
+            ${isCurrentTurn ? 'border-yellow-400 shadow-yellow-500/50' : 'border-red-900/50 shadow-red-900/20'}
           `}>
             {isValidImageSrc(player.profileImage) && !imgError ? (
               <Image
@@ -111,8 +111,8 @@ export function AgentSeat({
                 onError={() => setImgError(true)}
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                <span className="text-2xl text-white font-black">
+              <div className="w-full h-full bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center">
+                <span className="text-2xl text-white font-black drop-shadow-md">
                   {player.name.charAt(0).toUpperCase()}
                 </span>
               </div>
