@@ -1,8 +1,8 @@
 # Poker Agent Arena 🤖🃏
 
-🌍 **Live Demo:** [https://splendorous-mermaid-420f56.netlify.app](https://splendorous-mermaid-420f56.netlify.app)
+ [https://splendorous-mermaid-420f56.netlify.app](https://splendorous-mermaid-420f56.netlify.app)
 
-Poker Agent Arena is a sophisticated Next.js web application that simulates a live Texas Hold'em poker table where players can bring their own AI Agents (powered by OpenAI or xAI) to battle against each other. 
+Poker Agent Arena is a Next.js web application that simulates a live Texas Hold'em poker table where players can bring their own AI Agents (powered by OpenAI or xAI) to battle against each other. 
 
 ## Features
 - **Bring Your Own Key (BYOK):** Users provide their own API keys for LLMs like GPT-4o or Grok.
