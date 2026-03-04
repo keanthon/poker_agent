@@ -269,7 +269,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   processHumanAction: (action) => {
-    const { gameState, actionHistory } = get();
+    const { gameState, actionHistory, chatMessages } = get();
     if (!gameState || gameState.isHandComplete) return;
 
     try {
@@ -286,12 +286,38 @@ export const useGameStore = create<GameStore>((set, get) => ({
         timestamp: Date.now(),
       }];
 
+      // Create a chat message for the human action so it shows in Table Talk
+      let actionStr = '';
+      if (action.type === 'raise') {
+        actionStr = `Raises ${action.amount}`;
+      } else if (action.type === 'call') {
+        actionStr = 'Calls';
+      } else if (action.type === 'all_in') {
+        actionStr = 'Goes All-In';
+      } else if (action.type === 'check') {
+        actionStr = 'Checks';
+      } else {
+        actionStr = 'Folds';
+      }
+
+      const humanChatMsg: TableChat = {
+        id: uuidv4(),
+        agentId: currentPlayer.id,
+        agentName: currentPlayer.name,
+        message: actionStr,
+        tone: 'neutral',
+        type: 'action',
+        timestamp: Date.now(),
+        handId: gameState.handId,
+        actionDisplay: actionStr,
+      };
+
       set({
         gameState: newGameState,
         actionHistory: newActionHistory,
+        chatMessages: [...chatMessages, humanChatMsg],
       });
     } catch (error) {
-      console.error('Error processing human action:', error);
       set({ error: 'Invalid action' });
     }
   },

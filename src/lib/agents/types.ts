@@ -37,7 +37,7 @@ export interface TableChat {
   agentName: string;
   message: string;
   tone: 'confident' | 'nervous' | 'aggressive' | 'friendly' | 'neutral';
-  type: 'trash_talk' | 'reaction' | 'bluff' | 'discussion' | 'greeting';
+  type: 'trash_talk' | 'reaction' | 'bluff' | 'discussion' | 'greeting' | 'action';
   timestamp: number;
   linkedThought?: AgentThought;
   actionDisplay?: string;

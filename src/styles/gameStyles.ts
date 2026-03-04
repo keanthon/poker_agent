@@ -529,7 +529,6 @@ export const gameStyles = {
   chatMessagesList: {
     flex: 1,
     overflowY: 'auto',
-    maxHeight: '500px',
     minHeight: 0,
   } as CSSProperties,
 

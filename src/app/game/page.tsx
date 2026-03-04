@@ -86,6 +86,26 @@ export default function GamePage() {
     return () => clearTimeout(timer);
   }, [isPlaying, gameState, isProcessingTurn, autoPlayDelay, processNextTurn]);
 
+  // Auto-continue after human action: if it's an AI's turn and we're not already auto-playing,
+  // trigger the next turn automatically so the game doesn't appear to "pause"
+  useEffect(() => {
+    if (isPlaying || !gameState || gameState.isHandComplete || isProcessingTurn) {
+      return;
+    }
+
+    const current = getCurrentPlayer(gameState);
+    if (!current || !current.isAI) {
+      return;
+    }
+
+    // Small delay so the human can see their action registered before AI responds
+    const timer = setTimeout(() => {
+      processNextTurn();
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [isPlaying, gameState, isProcessingTurn, processNextTurn]);
+
   const handleNewHand = useCallback(() => {
     startNewHand();
   }, [startNewHand]);
@@ -97,6 +117,12 @@ export default function GamePage() {
 
   // Track last spoken message ID to prevent re-speaking on re-renders
   const lastSpokenMessageIdRef = useRef<string | null>(null);
+
+  // Auto-scroll chat to bottom
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
 
   // TTS Integration
   useEffect(() => {
@@ -453,8 +479,18 @@ export default function GamePage() {
             <div style={styles.chatMessagesList}>
               {chatMessages.length === 0 ? (
                 <p style={styles.chatEmptyText}>No messages yet...</p>
-              ) : (
-                chatMessages.map((msg) => {
+              ) : (() => {
+                // Filter to show only current hand's messages for clarity
+                const currentHandId = gameState?.handId;
+                const visibleMessages = currentHandId 
+                  ? chatMessages.filter(m => m.handId === currentHandId)
+                  : chatMessages;
+                
+                if (visibleMessages.length === 0) {
+                  return <p style={styles.chatEmptyText}>New hand — waiting for action...</p>;
+                }
+
+                return visibleMessages.map((msg) => {
                   const hasLinkedThoughtAndTransparent = !!(msg.linkedThought && viewMode === 'transparent');
                   return (
                     <div key={msg.id} style={styles.chatMsgContainer}>
@@ -500,7 +536,8 @@ export default function GamePage() {
                     </div>
                   );
                 })
-              )}
+              })()}
+              <div ref={chatEndRef} />
             </div>
           </div>
       </div>
