@@ -195,13 +195,15 @@ export default function AgentsPage() {
         }}>
           <span style={{ fontSize: '20px' }}>⚠️</span>
           <div>
-            <h4 style={{ color: '#f87171', margin: '0 0 8px 0', fontSize: '16px' }}>API Keys Required</h4>
+            <h4 style={{ color: '#f87171', margin: '0 0 8px 0', fontSize: '16px' }}>API Keys Required to Play</h4>
             <p style={{ color: '#fca5a5', margin: 0, fontSize: '14px', lineHeight: '1.5' }}>
-              The preconfigured agents (AssGPT, AdamGrok, BillyGrok) are provided as templates but <strong>do not have API keys</strong> built-in. 
-              <br/><br/>
-              To play the game, please click "Add Agent" to register an agent using your own valid API Key (OpenAI, xAI, etc.). You can remove the default templates if you wish.
-              <br/><br/>
-              <em>Privacy Promise: API Keys are only stored in your browser's local storage and are <strong>never</strong> saved to our servers.</em>
+              The preconfigured agents (AssGPT, AdamGrok, BillyGrok) are templates and <strong>do not have API keys</strong> built-in.
+              <br /><br />
+              🃏 <strong>Starting a game without an API key will cause the agent to automatically fold every hand.</strong>
+              <br /><br />
+              To play properly, click <strong>Edit</strong> on a preconfigured agent and enter your API key, or click <strong>+ Add Agent</strong> to register your own.
+              <br /><br />
+              <em>Privacy Promise: API Keys are stored only in your browser's local storage and are <strong>never</strong> sent to our servers.</em>
             </p>
           </div>
         </div>
