@@ -110,7 +110,7 @@ export default function AgentsPage() {
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !apiKey.trim()) return;
+    if (!name.trim()) return;
     
     if (editingId) {
       updateAgent(editingId, {
@@ -348,6 +348,7 @@ export default function AgentsPage() {
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
+                  required
                 />
               </div>
 
@@ -371,12 +372,13 @@ export default function AgentsPage() {
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
+                  required
                 />
               </div>
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', color: '#d1d5db', marginBottom: '8px', fontSize: '14px' }}>
-                  API Key *
+                  API Key (required for play)
                 </label>
                 <input
                   type="password"
