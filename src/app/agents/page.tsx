@@ -26,6 +26,7 @@ export default function AgentsPage() {
   const [apiKey, setApiKey] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Auto-preload and auto-update agents
   useEffect(() => {
@@ -107,13 +108,24 @@ export default function AgentsPage() {
     e.preventDefault();
     if (!name.trim() || !apiKey.trim()) return;
     
-    registerAgent({
-      name: name.trim(),
-      apiUrl: apiUrl.trim(),
-      apiKey: apiKey.trim(),
-      profileImage: profileImage.trim() || '',
-      customPrompt: customPrompt.trim() || undefined,
-    });
+    if (editingId) {
+      updateAgent(editingId, {
+        name: name.trim(),
+        apiUrl: apiUrl.trim(),
+        apiKey: apiKey.trim(),
+        profileImage: profileImage.trim() || '',
+        customPrompt: customPrompt.trim() || undefined,
+      });
+      setEditingId(null);
+    } else {
+      registerAgent({
+        name: name.trim(),
+        apiUrl: apiUrl.trim(),
+        apiKey: apiKey.trim(),
+        profileImage: profileImage.trim() || '',
+        customPrompt: customPrompt.trim() || undefined,
+      });
+    }
     
     setName('');
     setApiKey('');
@@ -236,7 +248,19 @@ export default function AgentsPage() {
         {/* Action Buttons */}
         <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
           <button
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => {
+              if (showForm && !editingId) {
+                setShowForm(false);
+              } else {
+                setName('');
+                setApiUrl('https://api.openai.com/v1/chat/completions');
+                setApiKey('');
+                setProfileImage('');
+                setCustomPrompt('');
+                setEditingId(null);
+                setShowForm(true);
+              }
+            }}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -287,9 +311,12 @@ export default function AgentsPage() {
             border: '1px solid rgba(255,255,255,0.1)',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ color: 'white', margin: 0, fontSize: '1.25rem' }}>Register New Agent</h3>
+              <h3 style={{ color: 'white', margin: 0, fontSize: '1.25rem' }}>{editingId ? 'Edit Agent' : 'Register New Agent'}</h3>
               <button 
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingId(null);
+                }}
                 style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: '24px' }}
               >
                 ×
@@ -428,7 +455,7 @@ export default function AgentsPage() {
                   cursor: 'pointer',
                 }}
               >
-                Register Agent
+                {editingId ? 'Save Changes' : 'Register Agent'}
               </button>
             </form>
           </div>
@@ -530,24 +557,49 @@ export default function AgentsPage() {
                     </div>
                   )}
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeAgent(agent.id);
-                    selectedIds.delete(agent.id);
-                    setSelectedIds(new Set(selectedIds));
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#ef4444',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    padding: 0,
-                  }}
-                >
-                  Remove
-                </button>
+                <div style={{ display: 'flex', gap: '15px' }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setName(agent.name);
+                      setApiUrl(agent.apiUrl);
+                      setApiKey(agent.apiKey);
+                      setProfileImage(agent.profileImage);
+                      setCustomPrompt(agent.customPrompt || '');
+                      setEditingId(agent.id);
+                      setShowForm(true);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#60a5fa',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      padding: 0,
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeAgent(agent.id);
+                      selectedIds.delete(agent.id);
+                      setSelectedIds(new Set(selectedIds));
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ef4444',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      padding: 0,
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
           </div>
