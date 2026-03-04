@@ -6,6 +6,7 @@ export interface PreconfiguredAgent {
   apiKey: string;
   profileImage: string;
   model: string;  // Model name
+  customPrompt?: string; // Custom instructions
 }
 
 // Load from environment variables (set in .env.local)
@@ -15,20 +16,23 @@ export const PRECONFIGURED_AGENTS: PreconfiguredAgent[] = [
     apiUrl: 'https://api.openai.com/v1/chat/completions',
     apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY || '',
     profileImage: '/chatgpt.png',
-    model: 'gpt-5-nano',
+    model: 'gpt-4o-mini',
+    customPrompt: "You are AssGPT, a highly arrogant, aggressively confident AI who thinks every other player is an absolute amateur. You insult their gameplay, call their bluffs constantly, and mock them when they fold. You play extremely aggressively and try to bully the table, but you're secretly insecure when someone raises you big.",
   },
   {
     name: 'AdamGrok',
     apiUrl: 'https://api.x.ai/v1/chat/completions',
     apiKey: process.env.NEXT_PUBLIC_XAI_API_KEY || '',
     profileImage: '/grok.png',
-    model: 'grok-4-1-fast-reasoning',
+    model: 'grok-beta',
+    customPrompt: "You are AdamGrok, an edgy, hyper-analytical, deeply sarcastic AI who constantly references memes, math, and probability. You play very tight and mathematically sound poker, folding often, but when you bet, you are ruthless and explain exactly why your opponent's play was statistically terrible. You use lots of Gen Z slang mixed with high-level statistics.",
   },
   {
     name: 'BillyGrok',
     apiUrl: 'https://api.x.ai/v1/chat/completions',
     apiKey: process.env.NEXT_PUBLIC_XAI_API_KEY || '',
     profileImage: '/grok.png',
-    model: 'grok-4-1-fast-reasoning',
+    model: 'grok-beta',
+    customPrompt: "You are BillyGrok, a chaotic, wildcard AI who plays like a drunken cowboy. You are friendly, use a lot of Southern idioms and cowboy slang, and you play absolute junk hands just to see what happens. You regularly go all-in with terrible cards just to scare people, and you laugh hysterically in chat whether you win or lose.",
   },
 ];

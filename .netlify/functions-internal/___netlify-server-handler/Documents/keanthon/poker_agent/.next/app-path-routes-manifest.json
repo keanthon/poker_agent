@@ -1,0 +1,9 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/agents/page": "/agents",
+  "/api/chat/route": "/api/chat",
+  "/favicon.ico/route": "/favicon.ico",
+  "/game/page": "/game",
+  "/page": "/"
+}

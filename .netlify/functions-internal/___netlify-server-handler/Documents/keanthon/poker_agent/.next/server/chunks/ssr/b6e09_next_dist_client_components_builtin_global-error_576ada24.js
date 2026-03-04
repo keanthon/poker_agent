@@ -1,0 +1,3 @@
+module.exports=[64511,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(44298);a.n(d("[project]/Documents/keanthon/poker_agent/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},15670,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(44298);a.n(d("[project]/Documents/keanthon/poker_agent/node_modules/next/dist/client/components/builtin/global-error.js"))},22711,a=>{"use strict";a.i(64511);var b=a.i(15670);a.n(b)}];
+
+//# sourceMappingURL=b6e09_next_dist_client_components_builtin_global-error_576ada24.js.map

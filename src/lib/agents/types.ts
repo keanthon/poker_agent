@@ -12,6 +12,7 @@ export interface AIAgent {
   personality?: string;
   voiceId?: string; // For TTS differentiation
   model?: string; // AI model to use (e.g., gpt-4o-mini, grok-2-1212)
+  customPrompt?: string; // Custom instructions prepended to the system prompt
 }
 
 // Agent's internal thought process
@@ -101,5 +102,6 @@ export interface StoredAgent {
   personality?: string;
   voiceId?: string;
   model?: string; // AI model to use
+  customPrompt?: string; // Custom instructions prepended to the system prompt
   createdAt: number;
 }

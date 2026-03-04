@@ -169,8 +169,12 @@ ${context.previousHands.join('\n')}
 
 What's your move? Think through your decision first, then use the appropriate tool.`;
 
+  const finalSystemPrompt = agent.customPrompt 
+    ? `[CUSTOM INSTRUCTIONS]\n${agent.customPrompt}\n\n[SYSTEM INSTRUCTIONS]\n${SYSTEM_PROMPT}`
+    : SYSTEM_PROMPT;
+
   let messages: any[] = [
-    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'system', content: finalSystemPrompt },
     { role: 'user', content: userMessage },
   ];
 

@@ -25,6 +25,7 @@ export default function AgentsPage() {
   const [apiUrl, setApiUrl] = useState('https://api.openai.com/v1/chat/completions');
   const [apiKey, setApiKey] = useState('');
   const [profileImage, setProfileImage] = useState('');
+  const [customPrompt, setCustomPrompt] = useState('');
 
   // Auto-preload and auto-update agents
   useEffect(() => {
@@ -40,13 +41,20 @@ export default function AgentsPage() {
         });
       });
     } else {
-      // Update existing agents with missing model field
+      // Update existing agents with missing model or prompt
       registeredAgents.forEach(agent => {
-        if (!agent.model) {
-          const preconfigured = PRECONFIGURED_AGENTS.find(p => p.model === agent.name || p.name === agent.name);
-          if (preconfigured) {
-            updateAgent(agent.id, { model: preconfigured.model });
-          }
+        let updates: Partial<typeof agent> = {};
+        const preconfigured = PRECONFIGURED_AGENTS.find(p => p.model === agent.name || p.name === agent.name);
+        
+        if (!agent.model && preconfigured) {
+          updates.model = preconfigured.model;
+        }
+        if (!agent.customPrompt && preconfigured?.customPrompt) {
+          updates.customPrompt = preconfigured.customPrompt;
+        }
+        
+        if (Object.keys(updates).length > 0) {
+          updateAgent(agent.id, updates);
         }
       });
     }
@@ -104,11 +112,13 @@ export default function AgentsPage() {
       apiUrl: apiUrl.trim(),
       apiKey: apiKey.trim(),
       profileImage: profileImage.trim() || '',
+      customPrompt: customPrompt.trim() || undefined,
     });
     
     setName('');
     setApiKey('');
     setProfileImage('');
+    setCustomPrompt('');
     setShowForm(false);
   };
 
@@ -155,6 +165,30 @@ export default function AgentsPage() {
         }}>
           Agent Management
         </h1>
+
+        {/* Disclaimer Info Box */}
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          marginBottom: '30px',
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'flex-start'
+        }}>
+          <span style={{ fontSize: '20px' }}>⚠️</span>
+          <div>
+            <h4 style={{ color: '#f87171', margin: '0 0 8px 0', fontSize: '16px' }}>API Keys Required</h4>
+            <p style={{ color: '#fca5a5', margin: 0, fontSize: '14px', lineHeight: '1.5' }}>
+              The preconfigured agents (AssGPT, AdamGrok, BillyGrok) are provided as templates but <strong>do not have API keys</strong> built-in. 
+              <br/><br/>
+              To play the game, please click "Add Agent" to register an agent using your own valid API Key (OpenAI, xAI, etc.). You can remove the default templates if you wish.
+              <br/><br/>
+              <em>Privacy Promise: API Keys are only stored in your browser's local storage and are <strong>never</strong> saved to our servers.</em>
+            </p>
+          </div>
+        </div>
 
         {/* Quick Start Section */}
         {registeredAgents.length >= 2 && (
@@ -352,6 +386,30 @@ export default function AgentsPage() {
                     fontSize: '14px',
                     outline: 'none',
                     boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{ display: 'block', color: '#d1d5db', marginBottom: '8px', fontSize: '14px' }}>
+                  Custom Base Prompt (optional)
+                </label>
+                <textarea
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  placeholder="e.g., You play extremely conservatively and fold to almost any bet."
+                  style={{
+                    width: '100%',
+                    padding: '14px 18px',
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '10px',
+                    color: 'white',
+                    fontSize: '14px',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    minHeight: '100px',
+                    resize: 'vertical',
                   }}
                 />
               </div>

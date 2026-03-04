@@ -1,0 +1,11 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_global-error/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__6c1f30d6._.js")
+R.c("server/chunks/ssr/Documents_keanthon_poker_agent_b6fd0604._.js")
+R.c("server/chunks/ssr/b6e09_next_dist_b731f6ee._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__380650cb._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__59e25700._.js")
+R.c("server/chunks/ssr/b6e09_next_dist_5ab56473._.js")
+R.c("server/chunks/ssr/Documents_keanthon_poker_agent_src_app_9888d329._.js")
+R.c("server/chunks/ssr/60ddd_poker_agent__next-internal_server_app__global-error_page_actions_781eb8fe.js")
+R.m(74105)
+module.exports=R.m(74105).exports
