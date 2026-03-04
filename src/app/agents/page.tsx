@@ -73,18 +73,7 @@ export default function AgentsPage() {
     }
   }, [registeredAgents]);
 
-  const handleStartGame = () => {
-    const agentsToUse = selectedIds.size >= 2 
-      ? registeredAgents.filter(a => selectedIds.has(a.id))
-      : registeredAgents;
-    
-    if (agentsToUse.length >= 2) {
-      const agents = agentsToUse.map(storedAgentToAIAgent);
-      createNewGame(agents);
-      startNewHand();
-      router.push('/game');
-    }
-  };
+
 
   const handleQuickStart = () => {
     if (registeredAgents.length >= 2) {
@@ -656,37 +645,7 @@ export default function AgentsPage() {
           </div>
         )}
 
-        {/* Start Game Button (shown when 2+ selected) */}
-        {selectedIds.size >= 2 && (
-          <div style={{
-            position: 'fixed',
-            bottom: '40px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 50,
-          }}>
-            <button
-              onClick={handleStartGame}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                background: 'linear-gradient(135deg, #22c55e, #10b981)',
-                color: 'white',
-                fontWeight: 700,
-                fontSize: '18px',
-                padding: '20px 40px',
-                borderRadius: '16px',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 10px 40px rgba(34, 197, 94, 0.4)',
-              }}
-            >
-              Start Game with {selectedIds.size} Agents
-              <span style={{ fontSize: '24px' }}>🎮</span>
-            </button>
-          </div>
-        )}
+
       </div>
     </div>
   );
