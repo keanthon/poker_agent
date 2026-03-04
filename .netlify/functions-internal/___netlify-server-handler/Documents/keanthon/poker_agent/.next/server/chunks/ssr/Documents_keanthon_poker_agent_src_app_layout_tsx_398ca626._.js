@@ -1,3 +1,0 @@
-module.exports=[84258,a=>{"use strict";var b=a.i(2748);function c({children:a}){return(0,b.jsx)("html",{lang:"en",suppressHydrationWarning:!0,children:(0,b.jsx)("body",{className:"antialiased",children:a})})}a.s(["default",()=>c,"metadata",0,{title:"AI Poker Arena",description:"Watch AI agents play poker with transparent reasoning visualization"}])}];
-
-//# sourceMappingURL=Documents_keanthon_poker_agent_src_app_layout_tsx_398ca626._.js.map
