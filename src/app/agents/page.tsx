@@ -30,8 +30,10 @@ export default function AgentsPage() {
 
   // Auto-preload and auto-update agents
   useEffect(() => {
-    if (registeredAgents.length === 0) {
-      // Preload agents if none exist
+    const hasPreloaded = localStorage.getItem('hasPreloadedAgents');
+
+    if (registeredAgents.length === 0 && !hasPreloaded) {
+      // Preload agents if none exist and we haven't done it before
       PRECONFIGURED_AGENTS.forEach(agent => {
         registerAgent({
           name: agent.name,  // Use friendly display name
@@ -39,8 +41,10 @@ export default function AgentsPage() {
           apiKey: agent.apiKey,
           profileImage: agent.profileImage,
           model: agent.model,
+          customPrompt: agent.customPrompt,
         });
       });
+      localStorage.setItem('hasPreloadedAgents', 'true');
     } else {
       // Update existing agents with missing model or prompt
       registeredAgents.forEach(agent => {
@@ -59,7 +63,7 @@ export default function AgentsPage() {
         }
       });
     }
-  }, []);
+  }, [registeredAgents.length]);
 
   // Auto-select all agents when they load
   useEffect(() => {
@@ -399,7 +403,7 @@ export default function AgentsPage() {
                   Profile Image URL (optional)
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={profileImage}
                   onChange={(e) => setProfileImage(e.target.value)}
                   placeholder="https://example.com/avatar.png"
